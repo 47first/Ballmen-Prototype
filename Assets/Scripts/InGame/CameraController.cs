@@ -3,12 +3,18 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private Transform _playerTransform;
+    [SerializeField] private float _lerpSpeed;
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
-        transform.position = new Vector3( 
+        transform.position = Vector3.Lerp(transform.position, GetPositionToPlayer(), _lerpSpeed);
+    }
+
+    private Vector3 GetPositionToPlayer() 
+    {
+        return new Vector3(
             _playerTransform.position.x,
             transform.position.y,
-            transform.position.z );
+            transform.position.z);
     }
 }
