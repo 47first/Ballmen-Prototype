@@ -1,13 +1,13 @@
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 namespace Ballmen.Player
 {
     internal enum PlayerType 
     { 
-        Client,
-        Owner
+        Client = 1,
+        Owner = 2,
+        Server = 4
     }
 
     internal sealed class PlayerDecorator : NetworkBehaviour
@@ -16,29 +16,42 @@ namespace Ballmen.Player
         [SerializeField] private MovementSettings _movementSettings;
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private LayerMask _obstaclesLayerMask;
+
+        //Wrappers
         private PlayerMovementWrapper _movementWrapper;
+        private PlayerAttackWrapper _attackWrapper;
+        private KickHandlerWrapper _kickHandlerWrapper;
 
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
+
+            Initialize();
         }
 
+        //Testing only
         private void Start()
         {
-            Initialize(_type);
+            Initialize();
         }
 
-        private void Initialize(PlayerType type) 
+        [ClientRpc]
+        internal void GetKickedClientRpc(Vector3 direction, float force)
         {
-            if (type == PlayerType.Owner)
-            {
-                _movementWrapper = new(new LocalPlayerMovement(_rigidbody, _obstaclesLayerMask), _movementSettings);
-            }
+            _kickHandlerWrapper.HandleKick(direction, force);
+        }
+
+        private void Initialize()
+        {
+            _movementWrapper = new(new LocalPlayerMovement(_rigidbody, _obstaclesLayerMask), _movementSettings);
+            _attackWrapper = new(new LocalPlayerAttack());
+            _kickHandlerWrapper = new(new RigidbodyKickHandler(_rigidbody));
         }
 
         private void Update()
         {
-            _movementWrapper?.HandleMovement();
+            _movementWrapper?.HandleMovementCommand();
+            _attackWrapper?.HandleAttackCommand();
         }
 
         private void OnDrawGizmos()

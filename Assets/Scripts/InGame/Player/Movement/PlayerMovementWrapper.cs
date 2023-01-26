@@ -18,7 +18,7 @@ namespace Ballmen.Player
             _settings = settings;
         }
 
-        internal void HandleMovement() 
+        internal void HandleMovementCommand() 
         {
             var dir = GetMoveDirection();
 
