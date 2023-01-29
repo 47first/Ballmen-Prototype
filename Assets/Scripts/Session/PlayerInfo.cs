@@ -9,22 +9,27 @@ namespace Ballmen.Session
     {
         private ulong _id;
         private FixedString128Bytes _nickname;
+        private FixedString128Bytes _guid;
 
-        public PlayerInfo(ulong id, FixedString128Bytes nickname)
+        public PlayerInfo(ulong id, FixedString128Bytes nickname, FixedString128Bytes guid)
         {
             _id = id;
             _nickname = nickname;
+            _guid = guid;
         }
 
         public PlayerInfo(ulong id, IClientInfo clientInfo) 
         {
             _id = id;
             _nickname = clientInfo.Nickname;
+            _guid = clientInfo.Guid;
         }
 
-        public ulong Id => _id; 
+        public ulong Id => _id;
 
         public FixedString128Bytes Nickname => _nickname;
+
+        public FixedString128Bytes GUID => _guid;
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
@@ -33,6 +38,7 @@ namespace Ballmen.Session
                 var reader = serializer.GetFastBufferReader();
                 reader.ReadValueSafe(out _id);
                 reader.ReadValueSafe(out _nickname);
+                reader.ReadValueSafe(out _guid);
             }
 
             else
@@ -40,12 +46,13 @@ namespace Ballmen.Session
                 var writer = serializer.GetFastBufferWriter();
                 writer.WriteValueSafe(_id);
                 writer.WriteValueSafe(_nickname);
+                writer.WriteValueSafe(_guid);
             }
         }
 
         public bool Equals(PlayerInfo other)
         {
-            return Id == other.Id && Nickname == other.Nickname;
+            return _guid == other.GUID;
         }
     }
 }

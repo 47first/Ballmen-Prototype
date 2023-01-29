@@ -22,8 +22,8 @@ namespace Ballmen.Session
         private void SpawnSessionInfo()
         {
             var instance = Instantiate(_sessionPrefab);
-            var sessionInfo = instance.GetComponent<SessionInfo>();
-            sessionInfo.NetworkObject.SpawnWithOwnership(_networkManager.LocalClientId);
+
+            instance.NetworkObject.SpawnWithOwnership(_networkManager.LocalClientId);
         }
     }
 }

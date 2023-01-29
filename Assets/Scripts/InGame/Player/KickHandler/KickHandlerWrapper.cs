@@ -4,10 +4,10 @@ namespace Ballmen.Player
 {
     internal interface IKickHandler 
     {
-        internal void HandleKick(Vector3 direction, float force);
+        internal void HandleKick(Vector3 direction);
     }
 
-    internal class KickHandlerWrapper
+    internal class KickHandlerWrapper : IPlayerWrapper
     {
         private IKickHandler _kickHandler;
         internal KickHandlerWrapper(IKickHandler kickHander) 
@@ -15,9 +15,9 @@ namespace Ballmen.Player
             _kickHandler = kickHander;
         }
         
-        internal void HandleKick(Vector3 direction, float force) 
+        internal void HandleKick(Vector3 direction) 
         {
-            _kickHandler.HandleKick(direction, force);
+            _kickHandler.HandleKick(direction);
         }
     }
 }

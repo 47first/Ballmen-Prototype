@@ -10,9 +10,11 @@ namespace Ballmen.Player
         Server = 4
     }
 
-    internal sealed class PlayerDecorator : NetworkBehaviour
+    internal interface IPlayerWrapper { }
+
+    internal sealed class PlayerDecorator : NetworkBehaviour, IPunchable
     {
-        [SerializeField] private PlayerType _type;
+        private static PlayerDecorator _local;
         [SerializeField] private MovementSettings _movementSettings;
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private LayerMask _obstaclesLayerMask;
@@ -22,6 +24,10 @@ namespace Ballmen.Player
         private PlayerAttackWrapper _attackWrapper;
         private KickHandlerWrapper _kickHandlerWrapper;
 
+        internal static PlayerDecorator Local => _local;
+
+        void IPunchable.GetPunched(Vector3 direction) => ReceivePunchClientRpc(direction);
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -29,34 +35,60 @@ namespace Ballmen.Player
             Initialize();
         }
 
-        //Testing only
-        private void Start()
+        public override void OnGainedOwnership()
         {
-            Initialize();
+            base.OnGainedOwnership();
+
+            Debug.Log("On Gained Ownership");
+
+            if (IsOwner)
+                _local = this;
+
+            Debug.Log($"_local == null = {_local == null}");
+        }
+
+        public override void OnLostOwnership()
+        {
+            Debug.Log("On Lost Ownership");
+
+            if (IsOwner)
+                _local = null;
+
+            Debug.Log($"_local == null = {_local == null}");
+
+            base.OnLostOwnership();
+        }
+
+        internal void Initialize()
+        {
+            if (IsOwner)
+            {
+                _movementWrapper = new(new LocalPlayerMovement(_rigidbody, _obstaclesLayerMask), _movementSettings);
+                _attackWrapper = new(new LocalPlayerAttack(this));
+                _kickHandlerWrapper = new(new RigidbodyKickHandler(_rigidbody));
+
+                _local = this;
+            }
+
+            else 
+            {
+                Destroy(_rigidbody);
+            }
         }
 
         [ClientRpc]
-        internal void GetKickedClientRpc(Vector3 direction, float force)
+        internal void ReceivePunchClientRpc(Vector3 direction)
         {
-            _kickHandlerWrapper.HandleKick(direction, force);
-        }
+            if (IsOwner == false)
+                return;
 
-        private void Initialize()
-        {
-            _movementWrapper = new(new LocalPlayerMovement(_rigidbody, _obstaclesLayerMask), _movementSettings);
-            _attackWrapper = new(new LocalPlayerAttack());
-            _kickHandlerWrapper = new(new RigidbodyKickHandler(_rigidbody));
+            _kickHandlerWrapper.HandleKick(direction);
         }
 
         private void Update()
         {
             _movementWrapper?.HandleMovementCommand();
             _attackWrapper?.HandleAttackCommand();
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawSphere(_rigidbody.transform.position, 0.6f);
         }
     }
 }

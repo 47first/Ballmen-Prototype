@@ -10,9 +10,9 @@ namespace Ballmen.Player
             _rigidbody = rigidbody;
         }
 
-        void IKickHandler.HandleKick(Vector3 direction, float force)
+        void IKickHandler.HandleKick(Vector3 direction)
         {
-            _rigidbody.AddForce(direction * force, ForceMode.Impulse);
+            _rigidbody.velocity = direction;
         }
     }
 }

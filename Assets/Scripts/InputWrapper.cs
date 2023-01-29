@@ -1,6 +1,11 @@
 namespace Ballmen.InputWrapper
 {
-    public class InputWrapper
+    internal interface IInputWrapper 
+    {
+        
+    }
+
+    public class InputWrapper : IInputWrapper
     {
 
     }

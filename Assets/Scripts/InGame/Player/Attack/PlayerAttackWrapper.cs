@@ -8,7 +8,7 @@ namespace Ballmen.Player
         internal void KickFlip();
     }
 
-    internal class PlayerAttackWrapper
+    internal class PlayerAttackWrapper : IPlayerWrapper
     {
         private IPlayerAttack _playerAttack;
         internal PlayerAttackWrapper(IPlayerAttack playerAttack)

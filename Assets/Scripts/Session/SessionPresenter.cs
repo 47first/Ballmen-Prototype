@@ -7,7 +7,7 @@ namespace Ballmen.Session
 {
     internal interface ISessionPresenter : IDisposable { }
 
-    internal class SessionPresenter : ISessionPresenter
+    internal sealed class SessionPresenter : ISessionPresenter
     {
         private ISessionInfo _sessionInfo;
         private NetworkManager _networkManager;
@@ -48,7 +48,8 @@ namespace Ballmen.Session
         {
             var clientInfo = ClientInfo.GetFromBytes(request.Payload);
 
-            if (_sessionInfo.Players.Count < _sessionInfo.GameSettings.PlayerLimit)
+            if (_sessionInfo.State == SessionState.GatheringPlayers &&
+                _sessionInfo.Players.Count < _sessionInfo.GameSettings.PlayerLimit)
             {
                 responce.Approved = true;
                 AddPlayer(new(request.ClientNetworkId, clientInfo));
@@ -59,7 +60,7 @@ namespace Ballmen.Session
             else
             {
                 responce.Approved = false;
-                responce.Reason = "There are max player amount already!";
+                responce.Reason = "Can't connect to the game";
 
                 Debug.Log($"{clientInfo.Nickname} unapproved!");
             }

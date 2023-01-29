@@ -6,19 +6,24 @@ namespace Ballmen.Client
     public interface IClientInfo 
     {
         public string Nickname { get; }
+        public string Guid { get; }
         public byte[] GetBytes();
     }
 
     public struct ClientInfo : IClientInfo
     {
         public string nickname;
+        public string guid;
 
-        private ClientInfo(string nickname)
+        private ClientInfo(string nickname, string guid)
         {
             this.nickname = nickname;
+            this.guid = guid;
         }
 
         public string Nickname => nickname;
+
+        public string Guid => guid;
 
         public byte[] GetBytes()
         {
@@ -34,6 +39,6 @@ namespace Ballmen.Client
         }
 
         [System.Obsolete] //Later will implement with Json serialization/deserialization
-        public static ClientInfo GetLocal() => new($"Player {UnityEngine.Random.Range(1, 10)}");
+        public static ClientInfo GetLocal() => new($"Player {UnityEngine.Random.Range(1, 10)}", System.Guid.NewGuid().ToString());
     }
 }

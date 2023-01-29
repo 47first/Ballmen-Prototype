@@ -5,10 +5,19 @@ using Ballmen.Client;
 
 namespace Ballmen.Session
 {
+    internal enum SessionState 
+    {
+        GatheringPlayers,
+        InGame,
+        WaitForHost
+    }
+
     internal interface ISessionInfo 
     {
         public NetworkList<PlayerInfo> Players { get; }
         public IGameSettings GameSettings { get; }
+        public SessionState State { get; }
+        public void ChangeState(SessionState state);
     }
 
     public class SessionInfo : NetworkBehaviour, ISessionInfo
@@ -18,10 +27,15 @@ namespace Ballmen.Session
         private NetworkList<PlayerInfo> _players;
         private IGameSettings _gameSettings;
         private ISessionPresenter _presenter;
+        private SessionState _state;
 
         public static SessionInfo Singleton => _instance;
+
         NetworkList<PlayerInfo> ISessionInfo.Players => _players;
+
         IGameSettings ISessionInfo.GameSettings => _gameSettings;
+
+        SessionState ISessionInfo.State => _state;
 
         public override void OnNetworkSpawn()
         {
@@ -57,6 +71,11 @@ namespace Ballmen.Session
             _players = new(readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
         }
 
+        private void OnDestroy()
+        {
+            _players.Dispose();
+        }
+
         private PlayerInfo GetHostPlayerInfo() => new(NetworkManager.LocalClientId, ClientInfo.GetLocal());
 
         private void SetSingletonInstance(SessionInfo instance) => _instance = instance;
@@ -74,5 +93,10 @@ namespace Ballmen.Session
         private void InitializeGameSettings() => _gameSettings = GameSettings.Default;
 
         private void RemoveGameSettings() => _gameSettings = null;
+
+        void ISessionInfo.ChangeState(SessionState state)
+        {
+            _state = state;
+        }
     }
 }

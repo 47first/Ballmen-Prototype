@@ -1,22 +1,29 @@
-﻿using UnityEngine;
+﻿using Ballmen.Server;
+using UnityEngine;
 
 namespace Ballmen.Player
 {
     internal class LocalPlayerAttack : IPlayerAttack
     {
-        internal LocalPlayerAttack() 
+        private PlayerDecorator _player;
+        private const float _radius = 50;
+        private const float _force = 50;
+
+        internal LocalPlayerAttack(PlayerDecorator player)
         {
-            
+            _player = player;
         }
 
         void IPlayerAttack.Kick()
         {
-            
+            ServerImpulseCreator.Singleton.CreateImpulseInRadiusServerRpc(
+                _player.transform.position, _radius, _force, default);
         }
 
         void IPlayerAttack.KickFlip()
         {
-            throw new System.NotImplementedException();
+            ServerImpulseCreator.Singleton.CreateImpulseInRadiusServerRpc(
+                _player.transform.position, _radius, _force, default);
         }
     }
 }
