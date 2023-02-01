@@ -13,7 +13,7 @@ namespace Ballmen.Session
         {
             _networkManager = NetworkManager.Singleton;
 
-            _networkManager.NetworkConfig.ConnectionData = ClientInfo.GetLocal().GetBytes();
+            _networkManager.NetworkConfig.ConnectionData = LocalClientInfo.GetLocal().GetBytes();
             Debug.Log($"Connection data size: {_networkManager.NetworkConfig.ConnectionData.Length}");
 
             _networkManager.OnServerStarted += SpawnSessionInfo;

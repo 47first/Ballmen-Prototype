@@ -15,7 +15,7 @@ namespace Ballmen.Client
         public string nickname;
         public string guid;
 
-        private ClientInfo(string nickname, string guid)
+        public ClientInfo(string nickname, string guid)
         {
             this.nickname = nickname;
             this.guid = guid;
@@ -37,8 +37,23 @@ namespace Ballmen.Client
             string convertedData = Encoding.UTF8.GetString(data);
             return JsonUtility.FromJson<ClientInfo>(convertedData);
         }
+    }
+
+    public static class LocalClientInfo 
+    {
+        private static ClientInfo? _localClientInfo = null;
 
         [System.Obsolete] //Later will implement with Json serialization/deserialization
-        public static ClientInfo GetLocal() => new($"Player {UnityEngine.Random.Range(1, 10)}", System.Guid.NewGuid().ToString());
+        public static ClientInfo GetLocal()
+        {
+            if (_localClientInfo == null)
+            {
+                Debug.Log("Initialize local client info");
+                //Getting data from json
+                _localClientInfo = new($"Player {UnityEngine.Random.Range(1, 10)}", System.Guid.NewGuid().ToString());
+            }
+
+            return _localClientInfo.Value;
+        }
     }
 }

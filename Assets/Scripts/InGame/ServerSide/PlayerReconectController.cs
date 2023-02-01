@@ -1,57 +1,41 @@
 using Ballmen.Session;
-using System;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace Ballmen.Server
 {
-    internal interface IPlayerConnectionController : IDisposable
+    internal interface IPlayerConnectionController
     {
-        internal void OnPlayerListChange(NetworkListEvent<PlayerInfo> changeEvent);
+        internal void OnPlayerReconnected(PlayerInfo reconnectedPlayer);
+        internal void OnPlayerDisconnected(PlayerInfo disconnectedPlayer);
     }
 
-    public class PlayerConnectionController : IPlayerConnectionController
+    internal sealed class PlayerConnectionController : IPlayerConnectionController
     {
-        void IDisposable.Dispose()
+        private IPlayerDecoratorsPull _playerDecoratorsPull;
+        internal PlayerConnectionController(IPlayerDecoratorsPull playerDecoratorsPull) 
         {
-            throw new NotImplementedException();
+            _playerDecoratorsPull = playerDecoratorsPull;
         }
 
-        void IPlayerConnectionController.OnPlayerListChange(NetworkListEvent<PlayerInfo> changeEvent)
+        void IPlayerConnectionController.OnPlayerReconnected(PlayerInfo reconnectedPlayer)
         {
-            if (changeEvent.Type == NetworkListEvent<PlayerInfo>.EventType.Remove)
-            {
-                OnPlayerDisconnected();
-            }
+            var connectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(reconnectedPlayer);
 
-            else if (changeEvent.Type == NetworkListEvent<PlayerInfo>.EventType.Add)
-            {
-                OnPlayerReconnected();
-            }
+            connectedPlayerDecorator.NetworkObject.ChangeOwnership(reconnectedPlayer.Id);
+            connectedPlayerDecorator.gameObject.SetActive(true);
+
+            Debug.Log($"{connectedPlayerDecorator.name} were appear");
         }
 
-        private void OnPlayerReconnected()
+        void IPlayerConnectionController.OnPlayerDisconnected(PlayerInfo disconnectedPlayer)
         {
-            /*
-            var connectedPlayer = _playersPull.GetPlayer(changeEvent.Value);
+            var disconnectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(disconnectedPlayer);
 
-            connectedPlayer.gameObject.transform.position = Vector3.zero;
-            connectedPlayer.NetworkObject.ChangeOwnership(changeEvent.Value.Id);
-            connectedPlayer.gameObject.SetActive(true);
+            disconnectedPlayerDecorator.NetworkObject.RemoveOwnership();
+            disconnectedPlayerDecorator.gameObject.SetActive(false);
 
-            Debug.Log($"{connectedPlayer.name} were appear");
-            */
-        }
-
-        private void OnPlayerDisconnected()
-        {
-            /*
-            var player = _playersPull.GetPlayer(changeEvent.PreviousValue);
-
-            player.NetworkObject.RemoveOwnership();
-            player.gameObject.SetActive(false);
-
-            Debug.Log($"{player.name} were hiden");
-            */
+            Debug.Log($"{disconnectedPlayerDecorator.name} were hiden");
         }
     }
 }

@@ -19,9 +19,23 @@ namespace Ballmen.Session
             _sessionInfo = sessionInfo;
 
             _networkManager.OnClientDisconnectCallback += RemovePlayer;
+            _networkManager.OnClientConnectedCallback += ClientConnected;
             _networkManager.ConnectionApprovalCallback = ConnectionApproval;
 
             AddPlayer(initialPlayer);
+        }
+
+        private void ClientConnected(ulong clientId)
+        {
+            foreach (var playerInfo in _sessionInfo.Players)
+            {
+                if (playerInfo.Id == clientId)
+                {
+                    //Require player founded
+                    _sessionInfo.OnPlayerConnected.Invoke(playerInfo);
+                    return;
+                }
+            }
         }
 
         public void Dispose()
@@ -29,7 +43,10 @@ namespace Ballmen.Session
             _networkManager.OnClientDisconnectCallback -= RemovePlayer;
         }
 
-        public void AddPlayer(PlayerInfo player) => _sessionInfo.Players.Add(player);
+        private void AddPlayer(PlayerInfo player)
+        {
+            _sessionInfo.Players.Add(player);
+        }
 
         private void RemovePlayer(ulong clientId)
         {
@@ -37,6 +54,7 @@ namespace Ballmen.Session
             {
                 if (_sessionInfo.Players[i].Id == clientId)
                 {
+                    _sessionInfo.OnPlayerDisconnected.Invoke(_sessionInfo.Players[i]);
                     _sessionInfo.Players.RemoveAt(i);
                     return;
                 }
@@ -44,15 +62,18 @@ namespace Ballmen.Session
             Debug.LogError("Player unfounded");
         }
 
-        public void ConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse responce)
+        private void ConnectionApproval(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse responce)
         {
             var clientInfo = ClientInfo.GetFromBytes(request.Payload);
 
             if (_sessionInfo.State == SessionState.GatheringPlayers &&
                 _sessionInfo.Players.Count < _sessionInfo.GameSettings.PlayerLimit)
             {
+                var approvedPlayer = new PlayerInfo(request.ClientNetworkId, clientInfo);
+
                 responce.Approved = true;
-                AddPlayer(new(request.ClientNetworkId, clientInfo));
+                AddPlayer(approvedPlayer);
+                _sessionInfo.OnPlayerApproved.Invoke(approvedPlayer);
 
                 Debug.Log($"{clientInfo.Nickname} approved!");
             }

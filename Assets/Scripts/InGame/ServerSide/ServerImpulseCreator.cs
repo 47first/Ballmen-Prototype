@@ -9,12 +9,12 @@ namespace Ballmen.Server
         private static ServerImpulseCreator _instance;
 
         [SerializeField] private LayerMask _impulseLayerMask;
-        private IPlayerDecoratorPull _playerDecoratorPull;
+        private IPlayerDecoratorsPull _playerDecoratorPull;
         private Impulse _impulse;
 
         internal static ServerImpulseCreator Singleton => _instance;
 
-        public void Initialize(IPlayerDecoratorPull playerDecoratorPull) 
+        public void Initialize(IPlayerDecoratorsPull playerDecoratorPull) 
         {
             _impulse = new ServerImpulse(_impulseLayerMask);
             _playerDecoratorPull = playerDecoratorPull;

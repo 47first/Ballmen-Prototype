@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using Ballmen.Scene;
 using Ballmen.Client;
+using UnityEngine.Events;
 
 namespace Ballmen.Session
 {
@@ -15,6 +16,9 @@ namespace Ballmen.Session
     internal interface ISessionInfo 
     {
         public NetworkList<PlayerInfo> Players { get; }
+        public UnityEvent<PlayerInfo> OnPlayerDisconnected { get; }
+        public UnityEvent<PlayerInfo> OnPlayerApproved { get; }
+        public UnityEvent<PlayerInfo> OnPlayerConnected { get; }
         public IGameSettings GameSettings { get; }
         public SessionState State { get; }
         public void ChangeState(SessionState state);
@@ -23,11 +27,14 @@ namespace Ballmen.Session
     public class SessionInfo : NetworkBehaviour, ISessionInfo
     {
         private static SessionInfo _instance;
-
         private NetworkList<PlayerInfo> _players;
         private IGameSettings _gameSettings;
         private ISessionPresenter _presenter;
         private SessionState _state;
+        //Events
+        private UnityEvent<PlayerInfo> _onPlayerDisconnected = new();
+        private UnityEvent<PlayerInfo> _onPlayerApproved = new();
+        private UnityEvent<PlayerInfo> _onPlayerConnected = new();
 
         public static SessionInfo Singleton => _instance;
 
@@ -36,6 +43,12 @@ namespace Ballmen.Session
         IGameSettings ISessionInfo.GameSettings => _gameSettings;
 
         SessionState ISessionInfo.State => _state;
+
+        public UnityEvent<PlayerInfo> OnPlayerDisconnected => _onPlayerDisconnected;
+
+        public UnityEvent<PlayerInfo> OnPlayerApproved => _onPlayerApproved;
+
+        public UnityEvent<PlayerInfo> OnPlayerConnected => _onPlayerConnected;
 
         public override void OnNetworkSpawn()
         {
@@ -76,7 +89,7 @@ namespace Ballmen.Session
             _players.Dispose();
         }
 
-        private PlayerInfo GetHostPlayerInfo() => new(NetworkManager.LocalClientId, ClientInfo.GetLocal());
+        private PlayerInfo GetHostPlayerInfo() => new(NetworkManager.LocalClientId, LocalClientInfo.GetLocal());
 
         private void SetSingletonInstance(SessionInfo instance) => _instance = instance;
 
