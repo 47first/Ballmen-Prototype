@@ -5,27 +5,22 @@ using Ballmen.Scene;
 
 public class NetworkManagerConnector : MonoBehaviour
 {
-    private NetworkManager _networkManager;
-
     public void StartClient()
     {
-        _networkManager.Shutdown();
+        var networkManager = NetworkManager.Singleton;
 
-        _networkManager.StartClient();
+        networkManager.Shutdown();
+        networkManager.StartClient();
     }
 
     public void StartHost()
     {
-        _networkManager.Shutdown();
+        var networkManager = NetworkManager.Singleton;
 
-        _networkManager.StartHost();
+        networkManager.Shutdown();
+        networkManager.StartHost();
 
         var lobbySceneName = SceneNames.GetByEnum(SceneEnum.Lobby);
-        _networkManager.SceneManager.LoadScene(lobbySceneName, LoadSceneMode.Single);
-    }
-
-    private void Start()
-    {
-        _networkManager = NetworkManager.Singleton;
+        networkManager.SceneManager.LoadScene(lobbySceneName, LoadSceneMode.Single);
     }
 }
