@@ -1,3 +1,4 @@
+using Ballmen.InGame;
 using Ballmen.Player;
 using Ballmen.Session;
 using System;
@@ -10,6 +11,7 @@ namespace Ballmen.Server
     {
         [SerializeField] private PlayerDecorator _playerDecoratorPrefab;
         [SerializeField] private ServerImpulseCreator _impulseCreatorPrefab;
+        [SerializeField] private ServerGameFlow _serverGameFlowPrefab;
 
         private ISessionInfo _sessionInfo;
         private IPlayerDecoratorsPull _playerDecoratorsPull;
@@ -35,13 +37,19 @@ namespace Ballmen.Server
             _playerDecoratorsPull = new PlayerDecoratorsPull();
             _playerConnectionController = new PlayerConnectionController(_playerDecoratorsPull);
 
-            SpawnServerFacadeObject(_playerDecoratorsPull);
+            SpawnServerGameFlow();
+            SpawnImpulseCreator(_playerDecoratorsPull);
 
             foreach (var playerInfo in _sessionInfo.Players)
                 SpawnPlayer(playerInfo);
 
             _sessionInfo.OnPlayerConnected.AddListener(_playerConnectionController.OnPlayerReconnected);
             _sessionInfo.OnPlayerDisconnected.AddListener(_playerConnectionController.OnPlayerDisconnected);
+        }
+
+        private void SpawnServerGameFlow()
+        {
+            Instantiate(_serverGameFlowPrefab);
         }
 
         private void SpawnPlayer(PlayerInfo playerInfo)
@@ -54,12 +62,12 @@ namespace Ballmen.Server
             _playerDecoratorsPull.AddDecorator(playerInfo.GUID.ToString(), playerDecorator);
         }
 
-        private void SpawnServerFacadeObject(IPlayerDecoratorsPull playerDecoratorPull)
+        private void SpawnImpulseCreator(IPlayerDecoratorsPull playerDecoratorPull)
         {
-            var serverFacade = Instantiate(_impulseCreatorPrefab);
+            var impulseCreator = Instantiate(_impulseCreatorPrefab);
 
-            serverFacade.NetworkObject.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
-            serverFacade.Initialize(playerDecoratorPull);
+            impulseCreator.NetworkObject.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
+            impulseCreator.Initialize(playerDecoratorPull);
         }
     }
 }
