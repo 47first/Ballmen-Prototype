@@ -27,12 +27,13 @@ namespace Ballmen.InGame
 
         internal static void SetSingleton(GameFlowInfo instance) 
         {
+            Debug.Log("Set Game Flow Singleton");
             _instance = instance;
         }
 
         private void Start()
         {
-            SetSingleton(_instance);
+            SetSingleton(this);
         }
     }
 }

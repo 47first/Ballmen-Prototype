@@ -74,7 +74,7 @@ namespace Ballmen.Player
 
             else
             {
-                Destroy(_rigidbody);
+                //Destroy(_rigidbody);
             }
         }
 
