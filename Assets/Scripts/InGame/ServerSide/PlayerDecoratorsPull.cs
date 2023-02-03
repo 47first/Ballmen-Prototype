@@ -11,6 +11,7 @@ namespace Ballmen.Server
     {
         internal void AddDecorator(string guid, PlayerDecorator playerInstance);
         internal PlayerDecorator GetDecorator(PlayerInfo playerInfo);
+        internal PlayerDecorator GetDecorator(GameObject gameObject);
         internal PlayerDecorator GetDecorator(ulong id);
     }
 
@@ -47,6 +48,11 @@ namespace Ballmen.Server
         PlayerDecorator IPlayerDecoratorsPull.GetDecorator(ulong id)
         {
             return _pull.Values.First(decorator => decorator.OwnerClientId == id);
+        }
+
+        PlayerDecorator IPlayerDecoratorsPull.GetDecorator(GameObject gameObject)
+        {
+            return _pull.Values.First(decorator => decorator.gameObject == gameObject);
         }
     }
 }

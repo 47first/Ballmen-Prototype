@@ -18,11 +18,12 @@ namespace Ballmen.Server
             _playerDecoratorsPull = playerDecoratorsPull;
         }
 
-        void IPlayerConnectionController.OnPlayerReconnected(PlayerInfo reconnectedPlayer)
+        void IPlayerConnectionController.OnPlayerReconnected(PlayerInfo reconnectedPlayerInfo)
         {
-            var connectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(reconnectedPlayer);
+            var connectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(reconnectedPlayerInfo);
 
-            connectedPlayerDecorator.NetworkObject.ChangeOwnership(reconnectedPlayer.Id);
+            connectedPlayerDecorator.BindPlayerInfo(reconnectedPlayerInfo);
+            connectedPlayerDecorator.NetworkObject.ChangeOwnership(reconnectedPlayerInfo.Id);
             connectedPlayerDecorator.gameObject.SetActive(true);
 
             Debug.Log($"{connectedPlayerDecorator.name} were appear");

@@ -1,17 +1,11 @@
+using Ballmen.Session;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Ballmen.Player
 {
-    internal enum PlayerType 
-    { 
-        Client = 1,
-        Owner = 2,
-        Server = 4
-    }
-
     internal interface IPlayerWrapper { }
-
+   
     internal sealed class PlayerDecorator : NetworkBehaviour, IPunchable
     {
         private static PlayerDecorator _local;
@@ -24,7 +18,12 @@ namespace Ballmen.Player
         private PlayerAttackWrapper _attackWrapper;
         private KickHandlerWrapper _kickHandlerWrapper;
 
+        //Info
+        private PlayerInfo _playerInfo;
+
         internal static PlayerDecorator Local => _local;
+
+        internal PlayerInfo PlayerInfo => _playerInfo;
 
         void IPunchable.GetPunched(Vector3 direction) => ReceivePunchClientRpc(direction);
 
@@ -83,6 +82,11 @@ namespace Ballmen.Player
                 return;
 
             _kickHandlerWrapper.HandleKick(direction);
+        }
+
+        internal void BindPlayerInfo(PlayerInfo playerInfo) 
+        {
+            _playerInfo = playerInfo;
         }
 
         private void Update()

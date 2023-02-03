@@ -56,6 +56,7 @@ namespace Ballmen.Server
         {
             var playerDecorator = Instantiate(_playerDecoratorPrefab);
 
+            playerDecorator.BindPlayerInfo(playerInfo);
             playerDecorator.NetworkObject.SpawnWithOwnership(playerInfo.Id, true);
             playerDecorator.NetworkObject.DontDestroyWithOwner = true;
 

@@ -8,24 +8,29 @@ namespace Ballmen.Session
     public struct PlayerInfo : INetworkSerializable, IEquatable<PlayerInfo>
     {
         private ulong _id;
+        private GameTeam _team;
         private FixedString128Bytes _nickname;
         private FixedString128Bytes _guid;
 
-        public PlayerInfo(ulong id, FixedString128Bytes nickname, FixedString128Bytes guid)
+        public PlayerInfo(ulong id, GameTeam team, FixedString128Bytes nickname, FixedString128Bytes guid)
         {
             _id = id;
+            _team = team;
             _nickname = nickname;
             _guid = guid;
         }
 
-        public PlayerInfo(ulong id, IClientInfo clientInfo) 
+        internal PlayerInfo(ulong id, IClientInfo clientInfo) 
         {
             _id = id;
+            _team = GameTeam.None;
             _nickname = clientInfo.Nickname;
             _guid = clientInfo.Guid;
         }
 
         public ulong Id => _id;
+
+        public GameTeam Team => _team;
 
         public FixedString128Bytes Nickname => _nickname;
 
@@ -37,6 +42,7 @@ namespace Ballmen.Session
             {
                 var reader = serializer.GetFastBufferReader();
                 reader.ReadValueSafe(out _id);
+                reader.ReadValueSafe(out _team);
                 reader.ReadValueSafe(out _nickname);
                 reader.ReadValueSafe(out _guid);
             }
@@ -45,6 +51,7 @@ namespace Ballmen.Session
             {
                 var writer = serializer.GetFastBufferWriter();
                 writer.WriteValueSafe(_id);
+                writer.WriteValueSafe(_team);
                 writer.WriteValueSafe(_nickname);
                 writer.WriteValueSafe(_guid);
             }
