@@ -2,6 +2,7 @@ using Ballmen.InGame;
 using Ballmen.Player;
 using Ballmen.Session;
 using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace Ballmen.Server
         [SerializeField] private PlayerDecorator _playerDecoratorPrefab;
         [SerializeField] private ServerImpulseCreator _impulseCreatorPrefab;
         [SerializeField] private ServerGameFlow _serverGameFlowPrefab;
+        [SerializeField] private List<Basket> _sceneBaskets;
 
         private ISessionInfo _sessionInfo;
         private IPlayerDecoratorsPull _playerDecoratorsPull;
@@ -36,9 +38,10 @@ namespace Ballmen.Server
             _sessionInfo = SessionInfo.Singleton;
             _playerDecoratorsPull = new PlayerDecoratorsPull();
             _playerConnectionController = new PlayerConnectionController(_playerDecoratorsPull);
+            var serverGameFlow = GetAndSpawnServerGameFlow();
 
-            SpawnServerGameFlow();
             SpawnImpulseCreator(_playerDecoratorsPull);
+            InitializeBaskets(_playerDecoratorsPull, serverGameFlow);
 
             TeamDistributor.DistributePlayersTeams(_sessionInfo.Players);
 
@@ -49,9 +52,19 @@ namespace Ballmen.Server
             _sessionInfo.OnPlayerDisconnected.AddListener(_playerConnectionController.OnPlayerDisconnected);
         }
 
-        private void SpawnServerGameFlow()
+        private void InitializeBaskets(IPlayerDecoratorsPull decoratorsPull, ServerGameFlow serverGameFlow)
         {
-            Instantiate(_serverGameFlowPrefab);
+            foreach (var basket in _sceneBaskets)
+                basket.Initialize(decoratorsPull, serverGameFlow);
+        }
+
+        private ServerGameFlow GetAndSpawnServerGameFlow()
+        {
+            var serverGameFlow = Instantiate(_serverGameFlowPrefab);
+
+            serverGameFlow.Initialize();
+
+            return serverGameFlow;
         }
 
         private void SpawnPlayer(PlayerInfo playerInfo)

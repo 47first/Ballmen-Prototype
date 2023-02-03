@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5611718334204096660}
   - component: {fileID: 5611718334204096649}
   - component: {fileID: 5611718334204096662}
-  - component: {fileID: 5611718334204096663}
   m_Layer: 6
   m_Name: BallCap
   m_TagString: Untagged
@@ -84,19 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &5611718334204096663
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5611718334204096661}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5611718334951994535
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,7 +256,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c90d71a1088b4ff478efb89bae324efa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraControllerPrefab: {fileID: 1173225976381349044, guid: 796421d80a82f8f4cbc0d9d4bf6622fb, type: 3}
   _movementSettings:
     jumpForce: 800
     moveSpeed: 800

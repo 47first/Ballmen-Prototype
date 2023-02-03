@@ -1,3 +1,4 @@
+using UnityEngine;
 using Unity.Netcode;
 
 namespace Ballmen.InGame
@@ -24,9 +25,14 @@ namespace Ballmen.InGame
             _blueTeamScore = new(writePerm: NetworkVariableWritePermission.Server, readPerm: NetworkVariableReadPermission.Everyone);
         }
 
+        internal static void SetSingleton(GameFlowInfo instance) 
+        {
+            _instance = instance;
+        }
+
         private void Start()
         {
-            _instance = this;
+            SetSingleton(_instance);
         }
     }
 }

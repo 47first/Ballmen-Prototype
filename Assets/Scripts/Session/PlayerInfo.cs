@@ -30,7 +30,7 @@ namespace Ballmen.Session
 
         public ulong Id => _id;
 
-        public GameTeam Team => _team;
+        public GameTeam Team { get => _team; set => _team = value; }
 
         public FixedString128Bytes Nickname => _nickname;
 
@@ -55,11 +55,6 @@ namespace Ballmen.Session
                 writer.WriteValueSafe(_nickname);
                 writer.WriteValueSafe(_guid);
             }
-        }
-
-        public void SetTeam(GameTeam team) 
-        {
-            _team = team;
         }
 
         public bool Equals(PlayerInfo other)

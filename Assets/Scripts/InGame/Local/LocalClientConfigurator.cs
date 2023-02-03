@@ -1,12 +1,18 @@
 using Ballmen.Player;
+using System;
 using UnityEngine;
 
 namespace Ballmen.InGame
 {
-    public class LocalClientConfigurator : MonoBehaviour
+    public class LocalClientConfigurator : MonoBehaviour, IDisposable
     {
         [SerializeField] private CameraController _cameraController;
         [SerializeField] private ScoreView _scoreView;
+
+        public void Dispose()
+        {
+            _scoreView.Dispose();
+        }
 
         internal void Configure() 
         {
@@ -18,5 +24,6 @@ namespace Ballmen.InGame
             _cameraController.SetTarget(localPlayerDecorator.transform);
             _scoreView.Bind(gameFlowInfo);
         }
+
     }
 }

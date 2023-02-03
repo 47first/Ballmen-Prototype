@@ -19,7 +19,8 @@ namespace Ballmen.InGame
 
         protected override void OnLeavingScene()
         {
-            _serverConfigurator?.Dispose();
+            _localClientConfigurator.Dispose();
+            _serverConfigurator.Dispose();
         }
     }
 }

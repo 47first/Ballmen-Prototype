@@ -11,12 +11,12 @@ namespace Ballmen.Server
             int blueTeamCount, redTeamCount;
             blueTeamCount = redTeamCount = 0;
 
-            foreach (var playerInfo in playerInfos) 
+            for(int i = 0; i < playerInfos.Count; i++) 
             {
-                if (playerInfo.Team == GameTeam.None)
+                if (playerInfos[i].Team == GameTeam.None)
                 {
                     GameTeam smallerTeam = redTeamCount > blueTeamCount ? GameTeam.Blue : GameTeam.Red;
-                    playerInfo.SetTeam(smallerTeam);
+                    playerInfos[i] = new();.Team = smallerTeam;
                 }
 
                 switch (playerInfo.Team) 
