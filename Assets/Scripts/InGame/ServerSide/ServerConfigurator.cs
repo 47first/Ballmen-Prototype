@@ -40,6 +40,8 @@ namespace Ballmen.Server
             SpawnServerGameFlow();
             SpawnImpulseCreator(_playerDecoratorsPull);
 
+            TeamDistributor.DistributePlayersTeams(_sessionInfo.Players);
+
             foreach (var playerInfo in _sessionInfo.Players)
                 SpawnPlayer(playerInfo);
 

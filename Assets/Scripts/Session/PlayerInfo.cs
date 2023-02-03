@@ -57,6 +57,11 @@ namespace Ballmen.Session
             }
         }
 
+        public void SetTeam(GameTeam team) 
+        {
+            _team = team;
+        }
+
         public bool Equals(PlayerInfo other)
         {
             return _guid == other.GUID;

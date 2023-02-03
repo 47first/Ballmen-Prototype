@@ -10,6 +10,7 @@ namespace Ballmen.Server
     internal interface IPlayerDecoratorsPull : System.IDisposable
     {
         internal void AddDecorator(string guid, PlayerDecorator playerInstance);
+        internal IEnumerable<PlayerDecorator> GetDecoratorsEnumerator();
         internal PlayerDecorator GetDecorator(PlayerInfo playerInfo);
         internal PlayerDecorator GetDecorator(GameObject gameObject);
         internal PlayerDecorator GetDecorator(ulong id);
@@ -53,6 +54,11 @@ namespace Ballmen.Server
         PlayerDecorator IPlayerDecoratorsPull.GetDecorator(GameObject gameObject)
         {
             return _pull.Values.First(decorator => decorator.gameObject == gameObject);
+        }
+
+        IEnumerable<PlayerDecorator> IPlayerDecoratorsPull.GetDecoratorsEnumerator()
+        {
+            return _pull.Values;
         }
     }
 }
