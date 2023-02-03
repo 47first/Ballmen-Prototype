@@ -64,6 +64,8 @@ namespace Ballmen.Lobby
         private void StartGame() 
         {
             var inGameSceneName = SceneNames.GetByEnum(SceneEnum.InGame);
+
+            _session.TeamDistributor.DistributePlayersTeams();
             _networkManager.SceneManager.LoadScene(inGameSceneName, LoadSceneMode.Single);
         }
     }

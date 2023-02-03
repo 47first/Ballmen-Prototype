@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Ballmen.Player
 {
     internal interface IPlayerWrapper { }
-   
+
     internal sealed class PlayerDecorator : NetworkBehaviour, IPunchable
     {
         private static PlayerDecorator _local;
@@ -20,10 +20,13 @@ namespace Ballmen.Player
 
         //Info
         private PlayerInfo _playerInfo;
+        private GameTeam _team;
 
         internal static PlayerDecorator Local => _local;
 
         internal PlayerInfo PlayerInfo => _playerInfo;
+
+        internal GameTeam Team => _team;
 
         void IPunchable.GetPunched(Vector3 direction) => ReceivePunchClientRpc(direction);
 
@@ -69,7 +72,7 @@ namespace Ballmen.Player
                 _local = this;
             }
 
-            else 
+            else
             {
                 Destroy(_rigidbody);
             }
@@ -84,9 +87,14 @@ namespace Ballmen.Player
             _kickHandlerWrapper.HandleKick(direction);
         }
 
-        internal void BindPlayerInfo(PlayerInfo playerInfo) 
+        internal void BindPlayerInfo(PlayerInfo playerInfo)
         {
             _playerInfo = playerInfo;
+        }
+
+        internal void ChangeTeam(GameTeam team) 
+        {
+            _team = team;
         }
 
         private void Update()

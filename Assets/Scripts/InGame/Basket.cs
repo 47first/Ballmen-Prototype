@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Basket : MonoBehaviour
 {
-    [SerializeField] private GameTeam _team;
     private bool _isInitializedByServer = false;
+    [SerializeField] private GameTeam _team;
     private IPlayerDecoratorsPull _playerDecorators;
     private ServerGameFlow _serverGameFlow;
 
@@ -24,11 +24,11 @@ public class Basket : MonoBehaviour
 
         var inBasketPlayerDecorator = _playerDecorators.GetDecorator(other.gameObject);
 
-        Debug.Log($"Team {inBasketPlayerDecorator.PlayerInfo.Team} in basket");
+        Debug.Log($"Team {inBasketPlayerDecorator.Team} in basket");
 
-        if (inBasketPlayerDecorator.PlayerInfo.Team == _team)
+        if (inBasketPlayerDecorator.Team == _team)
         {
-            GameTeam goaledTeam = inBasketPlayerDecorator.PlayerInfo.Team switch
+            GameTeam goaledTeam = inBasketPlayerDecorator.Team switch
             {
                 GameTeam.Red => GameTeam.Blue,
                 GameTeam.Blue => GameTeam.Red,

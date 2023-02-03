@@ -16,6 +16,7 @@ namespace Ballmen.Session
     internal interface ISessionInfo 
     {
         public NetworkList<PlayerInfo> Players { get; }
+        public TeamDistributor TeamDistributor { get; }
         public UnityEvent<PlayerInfo> OnPlayerDisconnected { get; }
         public UnityEvent<PlayerInfo> OnPlayerApproved { get; }
         public UnityEvent<PlayerInfo> OnPlayerConnected { get; }
@@ -28,6 +29,7 @@ namespace Ballmen.Session
     {
         private static SessionInfo _instance;
         private NetworkList<PlayerInfo> _players;
+        private TeamDistributor _teamDistributor;
         private IGameSettings _gameSettings;
         private ISessionPresenter _presenter;
         private SessionState _state;
@@ -39,6 +41,8 @@ namespace Ballmen.Session
         public static SessionInfo Singleton => _instance;
 
         NetworkList<PlayerInfo> ISessionInfo.Players => _players;
+
+        TeamDistributor ISessionInfo.TeamDistributor => _teamDistributor;
 
         IGameSettings ISessionInfo.GameSettings => _gameSettings;
 
@@ -59,8 +63,10 @@ namespace Ballmen.Session
             if (NetworkManager.IsHost)
             {
                 var initialPlayer = GetHostPlayerInfo();
-                SetPresetner(new SessionPresenter(this, initialPlayer));
+
+                _teamDistributor = new TeamDistributor();
                 InitializeGameSettings();
+                SetPresetner(new SessionPresenter(this, initialPlayer));
             }
         }
 
@@ -77,6 +83,11 @@ namespace Ballmen.Session
             base.OnNetworkDespawn();
 
             SceneManager.LoadScene(SceneNames.GetByEnum(SceneEnum.MainMenu), LoadSceneMode.Single);
+        }
+
+        void ISessionInfo.ChangeState(SessionState state)
+        {
+            _state = state;
         }
 
         private void Awake()
@@ -106,10 +117,5 @@ namespace Ballmen.Session
         private void InitializeGameSettings() => _gameSettings = GameSettings.Default;
 
         private void RemoveGameSettings() => _gameSettings = null;
-
-        void ISessionInfo.ChangeState(SessionState state)
-        {
-            _state = state;
-        }
     }
 }
