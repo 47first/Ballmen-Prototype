@@ -18,10 +18,20 @@ namespace Ballmen.Scene
             if (networkManager == null)
                 throw new InvalidOperationException("To use NetworkScenePresenter " +
                     "you must make sure that Network Manager already in scene");
-            
-            networkManager.SceneManager.OnLoadComplete += OnLoaded;
+
+            if (networkManager.IsServer)
+                networkManager.SceneManager.OnLoadComplete += OnLoaded;
+
+            else
+                networkManager.SceneManager.OnSynchronizeComplete += OnSynchronized;
 
             networkManager.SceneManager.OnUnload += OnUnloadScene;
+        }
+
+        private void OnSynchronized(ulong clientId)
+        {
+            if (NetworkManager.Singleton.LocalClientId == clientId)
+                OnEnteringScene();
         }
 
         private void OnLoaded(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
@@ -46,8 +56,11 @@ namespace Ballmen.Scene
         {
             var networkManager = NetworkManager.Singleton;
 
-            networkManager.SceneManager.OnLoadComplete -= OnLoaded;
-            networkManager.SceneManager.OnUnload -= OnUnloadScene;
+            if (networkManager.IsServer)
+                networkManager.SceneManager.OnLoadComplete -= OnLoaded;
+
+            else
+                networkManager.SceneManager.OnSynchronizeComplete -= OnSynchronized;
         }
     }
 }

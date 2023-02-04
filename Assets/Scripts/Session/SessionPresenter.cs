@@ -27,6 +27,8 @@ namespace Ballmen.Session
 
         private void ClientConnected(ulong clientId)
         {
+            Debug.Log($"Player {clientId} synchronized");
+
             foreach (var playerInfo in _sessionInfo.ConnectedPlayers)
             {
                 if (playerInfo.Id == clientId)
@@ -41,6 +43,8 @@ namespace Ballmen.Session
         public void Dispose()
         {
             _networkManager.OnClientDisconnectCallback -= RemovePlayer;
+            _networkManager.OnClientConnectedCallback -= ClientConnected;
+            _networkManager.ConnectionApprovalCallback = null;
         }
 
         private void AddPlayer(PlayerInfo player)

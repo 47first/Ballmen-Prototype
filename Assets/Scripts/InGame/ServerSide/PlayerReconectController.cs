@@ -24,9 +24,11 @@ namespace Ballmen.InGame.Server
 
             var connectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(reconnectedPlayerInfo);
 
+            /*
             connectedPlayerDecorator.gameObject.SetActive(true);
             connectedPlayerDecorator.BindPlayerInfo(reconnectedPlayerInfo);
-            connectedPlayerDecorator.NetworkObject.ChangeOwnership(reconnectedPlayerInfo.Id);
+            connectedPlayerDecorator.NetworkObject.SpawnWithOwnership(reconnectedPlayerInfo.Id);
+            */
 
             Debug.Log($"{connectedPlayerDecorator.name} were appear");
         }
@@ -35,8 +37,10 @@ namespace Ballmen.InGame.Server
         {
             var disconnectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(disconnectedPlayer);
 
-            disconnectedPlayerDecorator.NetworkObject.RemoveOwnership();
+            /*
+            disconnectedPlayerDecorator.NetworkObject.Despawn(false);
             disconnectedPlayerDecorator.gameObject.SetActive(false);
+            */
 
             Debug.Log($"{disconnectedPlayerDecorator.name} were hiden");
         }

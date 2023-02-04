@@ -19,8 +19,8 @@ namespace Ballmen.InGame
             var localPlayerDecorator = PlayerDecorator.Local;
             var gameFlowInfo = GameFlowInfo.Singleton;
 
-            Debug.Log($"localPlayerDecorator == null = {localPlayerDecorator == null}");
-            Debug.Log($"gameFlowInfo == null = {gameFlowInfo == null}");
+            Debug.Assert(localPlayerDecorator != null);
+            Debug.Assert(gameFlowInfo != null);
 
             _cameraController.SetTarget(localPlayerDecorator.transform);
             _scoreView.Bind(gameFlowInfo);

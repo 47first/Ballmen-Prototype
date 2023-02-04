@@ -30,39 +30,27 @@ namespace Ballmen.InGame.Player
 
         void IPunchable.GetPunched(Vector3 direction) => ReceivePunchClientRpc(direction);
 
-        public override void OnGainedOwnership()
+        public override void OnNetworkSpawn()
         {
-            base.OnGainedOwnership();
+            base.OnNetworkSpawn();
 
-            Debug.Log("On Gained Ownership");
-
-            if (IsOwner)
-                Initialize();
-
-            Debug.Log($"_local == null = {_local == null}");
-        }
-
-        public override void OnLostOwnership()
-        {
-            Debug.Log("On Lost Ownership");
-
-            if (IsOwner)
-                _local = null;
-
-            Debug.Log($"_local == null = {_local == null}");
-
-            base.OnLostOwnership();
+            Initialize();
         }
 
         internal void Initialize()
         {
+            Debug.Log("Initialize Player Decorator");
+
             if (IsOwner)
             {
+                Debug.Log("Local Decorator Founded");
+
                 _movementWrapper = new(new LocalPlayerMovement(_rigidbody, _obstaclesLayerMask), _movementSettings);
                 _attackWrapper = new(new LocalPlayerAttack(this));
                 _kickHandlerWrapper = new(new RigidbodyKickHandler(_rigidbody));
 
                 _local = this;
+                Debug.Assert(_local != null);
             }
         }
 
@@ -75,15 +63,9 @@ namespace Ballmen.InGame.Player
             _kickHandlerWrapper.HandleKick(direction);
         }
 
-        internal void BindPlayerInfo(PlayerInfo playerInfo)
-        {
-            _playerInfo = playerInfo;
-        }
+        internal void BindPlayerInfo(PlayerInfo playerInfo) => _playerInfo = playerInfo;
 
-        internal void SetTeam(GameTeam team) 
-        {
-            _team = team;
-        }
+        internal void SetTeam(GameTeam team) => _team = team;
 
         private void Update()
         {
