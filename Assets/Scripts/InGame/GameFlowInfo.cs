@@ -31,7 +31,7 @@ namespace Ballmen.InGame
             Debug.Assert(_instance != null);
         }
 
-        private void Start()
+        public override void OnNetworkSpawn()
         {
             SetSingleton(this);
         }

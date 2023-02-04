@@ -20,15 +20,13 @@ namespace Ballmen.InGame.Server
 
         void IPlayerConnectionController.OnPlayerReconnected(PlayerInfo reconnectedPlayerInfo)
         {
-            Debug.Log($"Player reconnected!");
+            Debug.Log($"Player approved!");
 
             var connectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(reconnectedPlayerInfo);
 
-            /*
             connectedPlayerDecorator.gameObject.SetActive(true);
             connectedPlayerDecorator.BindPlayerInfo(reconnectedPlayerInfo);
             connectedPlayerDecorator.NetworkObject.SpawnWithOwnership(reconnectedPlayerInfo.Id);
-            */
 
             Debug.Log($"{connectedPlayerDecorator.name} were appear");
         }
@@ -37,10 +35,8 @@ namespace Ballmen.InGame.Server
         {
             var disconnectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(disconnectedPlayer);
 
-            /*
             disconnectedPlayerDecorator.NetworkObject.Despawn(false);
             disconnectedPlayerDecorator.gameObject.SetActive(false);
-            */
 
             Debug.Log($"{disconnectedPlayerDecorator.name} were hiden");
         }

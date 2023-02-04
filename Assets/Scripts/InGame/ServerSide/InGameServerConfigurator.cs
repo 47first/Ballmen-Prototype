@@ -23,7 +23,7 @@ namespace Ballmen.InGame.Server
         {
             if (_sessionInfo != null)
             {
-                _sessionInfo.OnPlayerConnected.RemoveListener(_playerConnectionController.OnPlayerReconnected);
+                _sessionInfo.OnPlayerApproved.RemoveListener(_playerConnectionController.OnPlayerReconnected);
                 _sessionInfo.OnPlayerDisconnected.RemoveListener(_playerConnectionController.OnPlayerDisconnected);
             }
 
@@ -46,7 +46,7 @@ namespace Ballmen.InGame.Server
             foreach (var playerInfo in _sessionInfo.ConnectedPlayers)
                 SpawnPlayerDecorator(playerInfo);
 
-            _sessionInfo.OnPlayerConnected.AddListener(_playerConnectionController.OnPlayerReconnected);
+            _sessionInfo.OnPlayerApproved.AddListener(_playerConnectionController.OnPlayerReconnected);
             _sessionInfo.OnPlayerDisconnected.AddListener(_playerConnectionController.OnPlayerDisconnected);
         }
 
