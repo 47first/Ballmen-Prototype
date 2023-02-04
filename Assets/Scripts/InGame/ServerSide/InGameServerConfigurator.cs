@@ -42,6 +42,7 @@ namespace Ballmen.InGame.Server
 
             SpawnImpulseCreator(_playerDecoratorsPull);
             InitializeBaskets(_playerDecoratorsPull, serverGameFlow);
+            TeamDistributor.DistributePlayersTeams(_sessionInfo.PlayersStates);
 
             foreach (var playerInfo in _sessionInfo.ConnectedPlayers)
                 SpawnPlayerDecorator(playerInfo);
