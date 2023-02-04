@@ -16,7 +16,7 @@ namespace Ballmen.Session
     internal interface ISessionInfo 
     {
         public NetworkList<PlayerInfo> ConnectedPlayers { get; }
-        public PlayerStateContainer PlayersStates { get; }
+        public IPlayerStateContainer PlayersStates { get; }
         public UnityEvent<PlayerInfo> OnPlayerDisconnected { get; }
         public UnityEvent<PlayerInfo> OnPlayerApproved { get; }
         public UnityEvent<PlayerInfo> OnPlayerConnected { get; }
@@ -32,6 +32,7 @@ namespace Ballmen.Session
         private TeamDistributor _teamDistributor;
         private IGameSettings _gameSettings;
         private ISessionPresenter _presenter;
+        private IPlayerStateContainer _playerStateContainer;
         private SessionState _state;
         //Events
         private UnityEvent<PlayerInfo> _onPlayerDisconnected = new();
@@ -41,6 +42,8 @@ namespace Ballmen.Session
         public static SessionInfo Singleton => _instance;
 
         NetworkList<PlayerInfo> ISessionInfo.ConnectedPlayers => _connectedPlayers;
+
+        IPlayerStateContainer ISessionInfo.PlayersStates => _playerStateContainer;
 
         IGameSettings ISessionInfo.GameSettings => _gameSettings;
 
@@ -52,8 +55,6 @@ namespace Ballmen.Session
 
         public UnityEvent<PlayerInfo> OnPlayerConnected => _onPlayerConnected;
 
-        PlayerStateContainer ISessionInfo.PlayersStates => ((ISessionInfo)_instance).PlayersStates;
-
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
@@ -64,6 +65,7 @@ namespace Ballmen.Session
             {
                 var initialPlayer = GetHostPlayerInfo();
 
+                _playerStateContainer = new PlayerStateContainer();
                 InitializeGameSettings();
                 _presenter = new SessionPresenter(this, initialPlayer);
             }
@@ -93,7 +95,7 @@ namespace Ballmen.Session
 
         private void OnDestroy() 
         {
-            _connectedPlayers.Dispose();
+            _connectedPlayers?.Dispose();
         }
 
         private PlayerInfo GetHostPlayerInfo() => new(NetworkManager.LocalClientId, LocalClientInfo.GetLocal());

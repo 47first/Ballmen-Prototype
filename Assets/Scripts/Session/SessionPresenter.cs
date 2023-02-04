@@ -46,6 +46,9 @@ namespace Ballmen.Session
         private void AddPlayer(PlayerInfo player)
         {
             _sessionInfo.ConnectedPlayers.Add(player);
+
+            if (_sessionInfo.State == SessionState.GatheringPlayers)
+                _sessionInfo.PlayersStates.AddState(player.GUID.ToString());
         }
 
         private void RemovePlayer(ulong clientId)
@@ -55,6 +58,9 @@ namespace Ballmen.Session
                 if (_sessionInfo.ConnectedPlayers[i].Id == clientId)
                 {
                     var removePlayerInfo = _sessionInfo.ConnectedPlayers[i];
+
+                    if (_sessionInfo.State == SessionState.GatheringPlayers)
+                        _sessionInfo.PlayersStates.RemoveState(removePlayerInfo.GUID.ToString());
 
                     _sessionInfo.OnPlayerDisconnected.Invoke(removePlayerInfo);
                     _sessionInfo.ConnectedPlayers.RemoveAt(i);
@@ -69,8 +75,7 @@ namespace Ballmen.Session
         {
             var clientInfo = ClientInfo.GetFromBytes(request.Payload);
 
-            if (_sessionInfo.State == SessionState.GatheringPlayers &&
-                _sessionInfo.ConnectedPlayers.Count < _sessionInfo.GameSettings.PlayerLimit)
+            if (IsPlayerApproved(clientInfo.Guid))
             {
                 var approvedPlayer = new PlayerInfo(request.ClientNetworkId, clientInfo);
 
@@ -88,6 +93,14 @@ namespace Ballmen.Session
 
                 Debug.Log($"{clientInfo.Nickname} unapproved!");
             }
+        }
+
+        private bool IsPlayerApproved(string guid) 
+        {
+            return (_sessionInfo.State == SessionState.GatheringPlayers &&
+                _sessionInfo.ConnectedPlayers.Count < _sessionInfo.GameSettings.PlayerLimit) || 
+                (_sessionInfo.State == SessionState.InGame && 
+                ((IPlayerStateContainer)_sessionInfo.PlayersStates).Contains(guid));
         }
     }
 }

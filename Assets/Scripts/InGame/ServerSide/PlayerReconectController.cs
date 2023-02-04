@@ -20,11 +20,13 @@ namespace Ballmen.InGame.Server
 
         void IPlayerConnectionController.OnPlayerReconnected(PlayerInfo reconnectedPlayerInfo)
         {
+            Debug.Log($"Player reconnected!");
+
             var connectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(reconnectedPlayerInfo);
 
+            connectedPlayerDecorator.gameObject.SetActive(true);
             connectedPlayerDecorator.BindPlayerInfo(reconnectedPlayerInfo);
             connectedPlayerDecorator.NetworkObject.ChangeOwnership(reconnectedPlayerInfo.Id);
-            connectedPlayerDecorator.gameObject.SetActive(true);
 
             Debug.Log($"{connectedPlayerDecorator.name} were appear");
         }

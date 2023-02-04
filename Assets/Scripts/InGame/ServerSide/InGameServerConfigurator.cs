@@ -12,6 +12,7 @@ namespace Ballmen.InGame.Server
         [SerializeField] private PlayerDecorator _playerDecoratorPrefab;
         [SerializeField] private ServerImpulseCreator _impulseCreatorPrefab;
         [SerializeField] private ServerGameFlow _serverGameFlowPrefab;
+        //In scene
         [SerializeField] private List<Basket> _sceneBaskets;
 
         private ISessionInfo _sessionInfo;
@@ -43,7 +44,7 @@ namespace Ballmen.InGame.Server
             InitializeBaskets(_playerDecoratorsPull, serverGameFlow);
 
             foreach (var playerInfo in _sessionInfo.ConnectedPlayers)
-                SpawnPlayer(playerInfo);
+                SpawnPlayerDecorator(playerInfo);
 
             _sessionInfo.OnPlayerConnected.AddListener(_playerConnectionController.OnPlayerReconnected);
             _sessionInfo.OnPlayerDisconnected.AddListener(_playerConnectionController.OnPlayerDisconnected);
@@ -64,14 +65,15 @@ namespace Ballmen.InGame.Server
             return serverGameFlow;
         }
 
-        private void SpawnPlayer(PlayerInfo playerInfo)
+        private void SpawnPlayerDecorator(PlayerInfo playerInfo)
         {
             var playerDecorator = Instantiate(_playerDecoratorPrefab);
+            var playerTeam = _sessionInfo.PlayersStates.GetStateByGuid(playerInfo.GUID.ToString()).Team;
 
             playerDecorator.BindPlayerInfo(playerInfo);
+            playerDecorator.SetTeam(playerTeam);
             playerDecorator.NetworkObject.SpawnWithOwnership(playerInfo.Id, true);
             playerDecorator.NetworkObject.DontDestroyWithOwner = true;
-            playerDecorator.SetTeam(GameTeam.Blue);
 
             _playerDecoratorsPull.AddDecorator(playerInfo.GUID.ToString(), playerDecorator);
         }

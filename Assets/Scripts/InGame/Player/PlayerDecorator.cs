@@ -30,13 +30,6 @@ namespace Ballmen.InGame.Player
 
         void IPunchable.GetPunched(Vector3 direction) => ReceivePunchClientRpc(direction);
 
-        public override void OnNetworkSpawn()
-        {
-            base.OnNetworkSpawn();
-
-            Initialize();
-        }
-
         public override void OnGainedOwnership()
         {
             base.OnGainedOwnership();
@@ -44,7 +37,7 @@ namespace Ballmen.InGame.Player
             Debug.Log("On Gained Ownership");
 
             if (IsOwner)
-                _local = this;
+                Initialize();
 
             Debug.Log($"_local == null = {_local == null}");
         }
@@ -70,11 +63,6 @@ namespace Ballmen.InGame.Player
                 _kickHandlerWrapper = new(new RigidbodyKickHandler(_rigidbody));
 
                 _local = this;
-            }
-
-            else
-            {
-                //Destroy(_rigidbody);
             }
         }
 
