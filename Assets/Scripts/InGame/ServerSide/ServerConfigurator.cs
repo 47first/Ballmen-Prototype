@@ -1,12 +1,11 @@
-using Ballmen.InGame;
-using Ballmen.Player;
+using Ballmen.InGame.Player;
 using Ballmen.Session;
 using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Ballmen.Server
+namespace Ballmen.InGame.Server
 {
     public class ServerConfigurator : MonoBehaviour, IDisposable
     {

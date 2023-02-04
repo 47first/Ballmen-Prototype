@@ -1,6 +1,6 @@
 using System;
 
-namespace Ballmen.Player
+namespace Ballmen.InGame.Player
 {
     [Serializable]
     public class MovementSettings

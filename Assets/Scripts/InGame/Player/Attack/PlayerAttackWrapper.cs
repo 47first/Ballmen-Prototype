@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Ballmen.Player
+namespace Ballmen.InGame.Player
 {
     internal interface IPlayerAttack 
     {

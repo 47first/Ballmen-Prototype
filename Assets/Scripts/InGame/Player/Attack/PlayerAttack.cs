@@ -1,7 +1,7 @@
-﻿using Ballmen.Server;
+﻿using Ballmen.InGame.Server;
 using UnityEngine;
 
-namespace Ballmen.Player
+namespace Ballmen.InGame.Player
 {
     internal class LocalPlayerAttack : IPlayerAttack
     {

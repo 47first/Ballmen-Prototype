@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballmen 
+namespace Ballmen.InGame
 {
     internal interface IPunchable
     {
@@ -9,7 +9,7 @@ namespace Ballmen
     }
 }
 
-namespace Ballmen.Server
+namespace Ballmen.InGame.Server
 {
     internal abstract class Impulse
     {

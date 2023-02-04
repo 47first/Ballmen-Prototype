@@ -1,5 +1,5 @@
 using Ballmen.Scene;
-using Ballmen.Server;
+using Ballmen.InGame.Server;
 using UnityEngine;
 
 namespace Ballmen.InGame

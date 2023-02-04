@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballmen.Server
+namespace Ballmen.InGame.Server
 {
     internal sealed class ServerImpulse : Impulse
     {

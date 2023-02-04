@@ -1,34 +1,37 @@
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+namespace Ballmen.InGame 
 {
-    private static CameraController _instance;
-    private Transform _target;
-    [SerializeField] private float _lerpSpeed;
-
-    internal static CameraController Singleton => _instance;
-
-    internal void SetTarget(Transform targetTransform)
+    internal sealed class CameraController : MonoBehaviour
     {
-        _target = targetTransform;
-    }
+        private static CameraController _instance;
+        private Transform _target;
+        [SerializeField] private float _lerpSpeed;
 
-    private void Start()
-    {
-        _instance = this;
-    }
+        internal static CameraController Singleton => _instance;
 
-    private void FixedUpdate()
-    {
-        if(_target != null)
-            transform.position = Vector3.Lerp(transform.position, GetPositionToTarget(), _lerpSpeed);
-    }
+        internal void SetTarget(Transform targetTransform)
+        {
+            _target = targetTransform;
+        }
 
-    private Vector3 GetPositionToTarget() 
-    {
-        return new Vector3(
-            _target.position.x,
-            transform.position.y,
-            transform.position.z);
+        private void Start()
+        {
+            _instance = this;
+        }
+
+        private void FixedUpdate()
+        {
+            if (_target != null)
+                transform.position = Vector3.Lerp(transform.position, GetPositionToTarget(), _lerpSpeed);
+        }
+
+        private Vector3 GetPositionToTarget()
+        {
+            return new Vector3(
+                _target.position.x,
+                transform.position.y,
+                transform.position.z);
+        }
     }
 }

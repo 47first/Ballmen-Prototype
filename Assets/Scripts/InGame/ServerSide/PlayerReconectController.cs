@@ -2,7 +2,7 @@ using Ballmen.Session;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Ballmen.Server
+namespace Ballmen.InGame.Server
 {
     internal interface IPlayerConnectionController
     {

@@ -2,7 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using Ballmen.Session;
 
-namespace Ballmen.InGame
+namespace Ballmen.InGame.Server
 {
     public class ServerGameFlow : MonoBehaviour
     {

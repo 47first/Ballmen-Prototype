@@ -2,7 +2,7 @@ using Ballmen.Session;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Ballmen.Player
+namespace Ballmen.InGame.Player
 {
     internal interface IPlayerWrapper { }
 

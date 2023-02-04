@@ -1,4 +1,4 @@
-using Ballmen.Player;
+using Ballmen.InGame.Player;
 using System;
 using UnityEngine;
 

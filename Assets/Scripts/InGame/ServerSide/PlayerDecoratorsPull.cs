@@ -1,22 +1,21 @@
-using Ballmen.Player;
+using Ballmen.InGame.Player;
 using Ballmen.Session;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Ballmen.Server
+namespace Ballmen.InGame.Server
 {
     internal interface IPlayerDecoratorsPull : System.IDisposable
     {
         internal void AddDecorator(string guid, PlayerDecorator playerInstance);
-        internal IEnumerable<PlayerDecorator> GetDecoratorsEnumerator();
+        internal IEnumerable<PlayerDecorator> GetDecoratorsEnumerable();
         internal PlayerDecorator GetDecorator(PlayerInfo playerInfo);
         internal PlayerDecorator GetDecorator(GameObject gameObject);
         internal PlayerDecorator GetDecorator(ulong id);
     }
 
-    // Using to respawn associated decorator with player that reconnects to game
     internal sealed class PlayerDecoratorsPull : IPlayerDecoratorsPull
     {
         private Dictionary<string, PlayerDecorator> _pull = new();
@@ -56,7 +55,7 @@ namespace Ballmen.Server
             return _pull.Values.First(decorator => decorator.gameObject == gameObject);
         }
 
-        IEnumerable<PlayerDecorator> IPlayerDecoratorsPull.GetDecoratorsEnumerator()
+        IEnumerable<PlayerDecorator> IPlayerDecoratorsPull.GetDecoratorsEnumerable()
         {
             return _pull.Values;
         }
