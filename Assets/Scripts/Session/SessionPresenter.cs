@@ -27,7 +27,7 @@ namespace Ballmen.Session
 
         private void ClientConnected(ulong clientId)
         {
-            foreach (var playerInfo in _sessionInfo.Players)
+            foreach (var playerInfo in _sessionInfo.ConnectedPlayers)
             {
                 if (playerInfo.Id == clientId)
                 {
@@ -45,7 +45,7 @@ namespace Ballmen.Session
 
         private void AddPlayer(PlayerInfo player)
         {
-            _sessionInfo.Players.Add(player);
+            _sessionInfo.ConnectedPlayers.Add(player);
 
             if (_sessionInfo.State == SessionState.GatheringPlayers)
                 _sessionInfo.TeamDistributor.AddPlayer(player.GUID.ToString());
@@ -53,14 +53,14 @@ namespace Ballmen.Session
 
         private void RemovePlayer(ulong clientId)
         {
-            for(int i = 0; i < _sessionInfo.Players.Count; i++)
+            for(int i = 0; i < _sessionInfo.ConnectedPlayers.Count; i++)
             {
-                if (_sessionInfo.Players[i].Id == clientId)
+                if (_sessionInfo.ConnectedPlayers[i].Id == clientId)
                 {
-                    var removePlayerInfo = _sessionInfo.Players[i];
+                    var removePlayerInfo = _sessionInfo.ConnectedPlayers[i];
 
                     _sessionInfo.OnPlayerDisconnected.Invoke(removePlayerInfo);
-                    _sessionInfo.Players.RemoveAt(i);
+                    _sessionInfo.ConnectedPlayers.RemoveAt(i);
 
                     if (_sessionInfo.State == SessionState.GatheringPlayers)
                         _sessionInfo.TeamDistributor.RemovePlayer(removePlayerInfo.GUID.ToString());
@@ -76,7 +76,7 @@ namespace Ballmen.Session
             var clientInfo = ClientInfo.GetFromBytes(request.Payload);
 
             if (_sessionInfo.State == SessionState.GatheringPlayers &&
-                _sessionInfo.Players.Count < _sessionInfo.GameSettings.PlayerLimit)
+                _sessionInfo.ConnectedPlayers.Count < _sessionInfo.GameSettings.PlayerLimit)
             {
                 var approvedPlayer = new PlayerInfo(request.ClientNetworkId, clientInfo);
 

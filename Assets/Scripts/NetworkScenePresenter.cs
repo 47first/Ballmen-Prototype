@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 namespace Ballmen.Scene
 {
     [DisallowMultipleComponent] // Can be used if there's network manager already
-    internal abstract class NetworkScenePresenter : MonoBehaviour
+    public abstract class NetworkScenePresenter : MonoBehaviour
     {
         protected abstract void OnEnteringScene();
         protected virtual void OnLeavingScene() { }

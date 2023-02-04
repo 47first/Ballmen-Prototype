@@ -1,46 +1,30 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Ballmen.Session
 {
+    public enum GameTeam 
+    {
+        None,
+        Red,
+        Blue
+    }
+
     internal sealed class TeamDistributor
     {
-        private Dictionary<string, GameTeam> _playerTeam = new();
-
-        internal GameTeam GetTeamByGuid(string guid) 
-        {
-            return _playerTeam[guid];
-        }
-
-        internal void AddPlayer(string guid) 
-        {
-            _playerTeam.TryAdd(guid, GameTeam.None);
-        }
-
-        internal void RemovePlayer(string guid) 
-        {
-            _playerTeam.Remove(guid);
-        }
-
-        internal void ChangeTeam(string guid, GameTeam team) 
-        {
-            _playerTeam[guid] = team;
-        }
-
-        internal void DistributePlayersTeams() 
+        internal static void DistributePlayersTeams(IPlayerStateContainer states) 
         {
             int blueTeamCount, redTeamCount;
             blueTeamCount = redTeamCount = 0;
 
-            foreach(var key in _playerTeam.Keys.ToList())
+            foreach(var guid in states.GetGuids())
             {
-                if (_playerTeam[key] == GameTeam.None)
+                var state = states.GetStateByGuid(guid);
+
+                if (state.Team == GameTeam.None)
                 {
                     GameTeam smallerTeam = redTeamCount > blueTeamCount ? GameTeam.Blue : GameTeam.Red;
-                    ChangeTeam(key, smallerTeam);
+                    state.ChangeTeam(smallerTeam);
                 }
 
-                switch (_playerTeam[key]) 
+                switch (state.Team) 
                 {
                     case GameTeam.Red:
                         redTeamCount++;

@@ -15,8 +15,8 @@ namespace Ballmen.Session
 
     internal interface ISessionInfo 
     {
-        public NetworkList<PlayerInfo> Players { get; }
-        public TeamDistributor TeamDistributor { get; }
+        public NetworkList<PlayerInfo> ConnectedPlayers { get; }
+        public PlayerStateContainer PlayersStates { get; }
         public UnityEvent<PlayerInfo> OnPlayerDisconnected { get; }
         public UnityEvent<PlayerInfo> OnPlayerApproved { get; }
         public UnityEvent<PlayerInfo> OnPlayerConnected { get; }
@@ -28,7 +28,7 @@ namespace Ballmen.Session
     public class SessionInfo : NetworkBehaviour, ISessionInfo
     {
         private static SessionInfo _instance;
-        private NetworkList<PlayerInfo> _players;
+        private NetworkList<PlayerInfo> _connectedPlayers;
         private TeamDistributor _teamDistributor;
         private IGameSettings _gameSettings;
         private ISessionPresenter _presenter;
@@ -40,9 +40,7 @@ namespace Ballmen.Session
 
         public static SessionInfo Singleton => _instance;
 
-        NetworkList<PlayerInfo> ISessionInfo.Players => _players;
-
-        TeamDistributor ISessionInfo.TeamDistributor => _teamDistributor;
+        NetworkList<PlayerInfo> ISessionInfo.ConnectedPlayers => _connectedPlayers;
 
         IGameSettings ISessionInfo.GameSettings => _gameSettings;
 
@@ -54,31 +52,29 @@ namespace Ballmen.Session
 
         public UnityEvent<PlayerInfo> OnPlayerConnected => _onPlayerConnected;
 
+        PlayerStateContainer ISessionInfo.PlayersStates => ((ISessionInfo)_instance).PlayersStates;
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
 
-            SetSingletonInstance(this);
+            _instance = this;
 
             if (NetworkManager.IsHost)
             {
                 var initialPlayer = GetHostPlayerInfo();
 
-                _teamDistributor = new TeamDistributor();
                 InitializeGameSettings();
-                SetPresetner(new SessionPresenter(this, initialPlayer));
+                _presenter = new SessionPresenter(this, initialPlayer);
             }
         }
 
         public override void OnNetworkDespawn()
         {
-            RemoveSingletonInstance();
+            _instance = null;
 
             if (NetworkManager.IsHost)
-            {
-                RemovePresetner();
-                RemoveGameSettings();
-            }
+                _presenter.Dispose();
 
             base.OnNetworkDespawn();
 
@@ -92,30 +88,16 @@ namespace Ballmen.Session
 
         private void Awake()
         {
-            _players = new(readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
+            _connectedPlayers = new(readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
         }
 
-        private void OnDestroy()
+        private void OnDestroy() 
         {
-            _players.Dispose();
+            _connectedPlayers.Dispose();
         }
 
         private PlayerInfo GetHostPlayerInfo() => new(NetworkManager.LocalClientId, LocalClientInfo.GetLocal());
 
-        private void SetSingletonInstance(SessionInfo instance) => _instance = instance;
-
-        private void RemoveSingletonInstance() => _instance = null;
-
-        private void SetPresetner(ISessionPresenter presenter) => _presenter = presenter;
-
-        private void RemovePresetner() 
-        { 
-            _presenter?.Dispose();
-            _presenter = null;
-        }
-
         private void InitializeGameSettings() => _gameSettings = GameSettings.Default;
-
-        private void RemoveGameSettings() => _gameSettings = null;
     }
 }

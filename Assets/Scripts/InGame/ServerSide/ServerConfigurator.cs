@@ -43,7 +43,7 @@ namespace Ballmen.Server
             SpawnImpulseCreator(_playerDecoratorsPull);
             InitializeBaskets(_playerDecoratorsPull, serverGameFlow);
 
-            foreach (var playerInfo in _sessionInfo.Players)
+            foreach (var playerInfo in _sessionInfo.ConnectedPlayers)
                 SpawnPlayer(playerInfo);
 
             _sessionInfo.OnPlayerConnected.AddListener(_playerConnectionController.OnPlayerReconnected);
@@ -68,7 +68,6 @@ namespace Ballmen.Server
         private void SpawnPlayer(PlayerInfo playerInfo)
         {
             var playerDecorator = Instantiate(_playerDecoratorPrefab);
-            var playerTeam = _sessionInfo.TeamDistributor.GetTeamByGuid(playerInfo.GUID.ToString());
 
             playerDecorator.BindPlayerInfo(playerInfo);
             playerDecorator.NetworkObject.SpawnWithOwnership(playerInfo.Id, true);

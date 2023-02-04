@@ -38,7 +38,7 @@ namespace Ballmen.Lobby
                 return;
 
             _session = SessionInfo.Singleton;
-            _session.Players.OnListChanged += CallUpdateView;
+            _session.ConnectedPlayers.OnListChanged += CallUpdateView;
             CallUpdateView(default);
         }
 
@@ -50,13 +50,13 @@ namespace Ballmen.Lobby
             if(_networkManager.IsHost == false)
                 _networkManager.SceneManager.OnSynchronizeComplete -= BindClientView;
 
-            _session.Players.OnListChanged -= CallUpdateView;
+            _session.ConnectedPlayers.OnListChanged -= CallUpdateView;
             _networkManager.SceneManager.OnUnload -= OnNextScene;
         }
 
         private void CallUpdateView(NetworkListEvent<PlayerInfo> eventArgs)
         {
-            var model = new LobbyModel(_session.Players);
+            var model = new LobbyModel(_session.ConnectedPlayers);
 
             _view.UpdateView(model);
         }
