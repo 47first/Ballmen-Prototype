@@ -6,8 +6,8 @@ namespace Ballmen.InGame
 {
     internal class InGameScenePresenter : NetworkScenePresenter
     {
-        [SerializeField] private LocalClientConfigurator _localClientConfigurator;
-        [SerializeField] private ServerConfigurator _serverConfigurator;
+        [SerializeField] private InGameLocalConfigurator _localClientConfigurator;
+        [SerializeField] private InGameServerConfigurator _serverConfigurator;
 
         protected override void OnEnteringScene()
         {

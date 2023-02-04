@@ -46,9 +46,6 @@ namespace Ballmen.Session
         private void AddPlayer(PlayerInfo player)
         {
             _sessionInfo.ConnectedPlayers.Add(player);
-
-            if (_sessionInfo.State == SessionState.GatheringPlayers)
-                _sessionInfo.TeamDistributor.AddPlayer(player.GUID.ToString());
         }
 
         private void RemovePlayer(ulong clientId)
@@ -61,9 +58,6 @@ namespace Ballmen.Session
 
                     _sessionInfo.OnPlayerDisconnected.Invoke(removePlayerInfo);
                     _sessionInfo.ConnectedPlayers.RemoveAt(i);
-
-                    if (_sessionInfo.State == SessionState.GatheringPlayers)
-                        _sessionInfo.TeamDistributor.RemovePlayer(removePlayerInfo.GUID.ToString());
 
                     return;
                 }

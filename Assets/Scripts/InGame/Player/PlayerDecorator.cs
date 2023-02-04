@@ -92,7 +92,7 @@ namespace Ballmen.InGame.Player
             _playerInfo = playerInfo;
         }
 
-        internal void ChangeTeam(GameTeam team) 
+        internal void SetTeam(GameTeam team) 
         {
             _team = team;
         }

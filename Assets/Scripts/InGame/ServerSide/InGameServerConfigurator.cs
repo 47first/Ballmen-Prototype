@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Ballmen.InGame.Server
 {
-    public class ServerConfigurator : MonoBehaviour, IDisposable
+    public class InGameServerConfigurator : MonoBehaviour, IDisposable
     {
         [SerializeField] private PlayerDecorator _playerDecoratorPrefab;
         [SerializeField] private ServerImpulseCreator _impulseCreatorPrefab;
@@ -71,7 +71,7 @@ namespace Ballmen.InGame.Server
             playerDecorator.BindPlayerInfo(playerInfo);
             playerDecorator.NetworkObject.SpawnWithOwnership(playerInfo.Id, true);
             playerDecorator.NetworkObject.DontDestroyWithOwner = true;
-            playerDecorator.ChangeTeam(playerTeam);
+            playerDecorator.SetTeam(GameTeam.Blue);
 
             _playerDecoratorsPull.AddDecorator(playerInfo.GUID.ToString(), playerDecorator);
         }
