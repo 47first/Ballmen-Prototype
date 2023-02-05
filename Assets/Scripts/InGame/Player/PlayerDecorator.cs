@@ -54,23 +54,30 @@ namespace Ballmen.InGame.Player
             }
         }
 
+        internal void SetPosition(Vector3 position)
+        {
+            Debug.Log($"IsSpawner = {IsSpawned}");
+
+            if (IsSpawned)
+                SetPositionClientRpc(position);
+
+            else
+                transform.position = position;
+        }
+
         [ClientRpc]
-        internal void ReceivePunchClientRpc(Vector3 direction, ClientRpcParams clientRpcParams = default)
+        private void ReceivePunchClientRpc(Vector3 direction, ClientRpcParams clientRpcParams = default)
         {
             Debug.Log("Player receive rpc");
 
-            if (IsOwner == false)
-                return;
-
-            _kickHandlerWrapper.HandleKick(direction);
+            if (IsOwner)
+                _kickHandlerWrapper.HandleKick(direction);
         }
 
         [ClientRpc]
         internal void SetPositionClientRpc(Vector3 position, ClientRpcParams clientRpcParams = default)
         {
-            Debug.Log("Player receive rpc");
-
-            if(IsSpawned == false || IsOwner)
+            if(IsOwner)
                 transform.position = position;
         }
 

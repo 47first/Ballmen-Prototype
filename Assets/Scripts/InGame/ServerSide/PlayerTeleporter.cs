@@ -17,17 +17,24 @@ namespace Ballmen.InGame.Server
 
         void IPlayerTeleporter.TeleportToAnySpawnPoint(PlayerDecorator playerDecorator)
         {
+            Vector3 position = Vector3.zero;
+
             foreach (var spawnPoint in _teamSpawnPoints[playerDecorator.Team])
             {
                 if (spawnPoint.CanSpawn())
                 {
-                    playerDecorator.SetPositionClientRpc(spawnPoint.Position);
-                    return;
+                    position = spawnPoint.Position;
+                    break;
                 }
             }
 
-            Debug.LogWarning("There are no free spawn points!");
-            playerDecorator.SetPositionClientRpc(_teamSpawnPoints[playerDecorator.Team][0].Position);
+            if (position == Vector3.zero)
+            {
+                Debug.LogWarning("There are no free spawn points!");
+                position = _teamSpawnPoints[playerDecorator.Team][0].Position;
+            }
+
+            playerDecorator.SetPosition(position);
         }
 
         internal void Initialize()
