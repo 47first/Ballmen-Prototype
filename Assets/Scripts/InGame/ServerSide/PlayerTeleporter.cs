@@ -3,7 +3,7 @@ using Ballmen.Session;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Ballmen.InGame
+namespace Ballmen.InGame.Server
 {
     internal interface IPlayerTeleporter 
     {

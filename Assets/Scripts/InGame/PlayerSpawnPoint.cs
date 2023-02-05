@@ -13,13 +13,16 @@ namespace Ballmen.InGame
 
         internal bool CanSpawn() 
         {
-            return Physics.CheckBox(transform.position, Vector3.one, transform.rotation, _obstaclesLayerMask);
+            return !Physics.CheckBox(transform.position, Vector3.one, transform.rotation, _obstaclesLayerMask);
         }
 
         #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             Gizmos.DrawCube(transform.position, Vector3.one * 2);
+
+            if (CanSpawn() == false)
+                Debug.LogError($"The \"{name}\" spawn point will never spawn player!");
         }
         #endif
     }
