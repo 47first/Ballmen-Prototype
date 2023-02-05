@@ -13,6 +13,7 @@ namespace Ballmen.InGame.Server
         [SerializeField] private PlayerSpawner _playerSpawnerPrefab;
         //In scene
         [SerializeField] private List<Basket> _sceneBaskets;
+        [SerializeField] private PlayerTeleporter _teleporter;
 
         private ISessionInfo _sessionInfo;
         private IPlayerDecoratorsPull _playerDecoratorsPull;
@@ -34,6 +35,9 @@ namespace Ballmen.InGame.Server
             _sessionInfo = SessionInfo.Singleton;
             _playerDecoratorsPull = new PlayerDecoratorsPull();
             _playerConnectionController = new PlayerConnectionController(_sessionInfo, _playerDecoratorsPull);
+
+            _teleporter.Initialize();
+
             var serverGameFlow = SpawnServerGameFlow();
             var playerSpawner = InitializePlayerSpawner();
 
@@ -63,7 +67,7 @@ namespace Ballmen.InGame.Server
         {
             var playerSpawner = Instantiate(_playerSpawnerPrefab);
 
-            playerSpawner.Initialize(_playerDecoratorsPull);
+            playerSpawner.Initialize(_playerDecoratorsPull, _teleporter);
 
             return playerSpawner;
         }

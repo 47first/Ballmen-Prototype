@@ -8,32 +8,18 @@ namespace Ballmen.InGame.Server
     internal interface IPlayerSpawner 
     {
         internal void NetworkSpawnPlayer(PlayerInfo playerInfo, GameTeam team);
-        internal void TeleportToAnySpawnPoint(PlayerDecorator playerDecorator);
     }
 
     internal sealed class PlayerSpawner : MonoBehaviour
     {
         [SerializeField] private PlayerDecorator _playerDecoratorPrefab;
-        [SerializeField] private List<PlayerSpawnPoint> _spawnPoints;
-        private Dictionary<GameTeam, List<PlayerSpawnPoint>> _teamSpawnPoints;
         private IPlayerDecoratorsPull _decoratorsPull;
+        private IPlayerTeleporter _playerTeleporter;
 
-        internal void Initialize(IPlayerDecoratorsPull decoratorsPull)
+        internal void Initialize(IPlayerDecoratorsPull decoratorsPull, IPlayerTeleporter playerTeleporter)
         {
             _decoratorsPull = decoratorsPull;
-            InitializeDictionaryByTeams();
-        }
-
-        internal void SpawnOnAnyPoint(PlayerDecorator playerDecorator)
-        {
-            foreach (var spawnPoint in _teamSpawnPoints[playerDecorator.Team])
-            {
-                if (spawnPoint.CanSpawn())
-                {
-                    playerDecorator.transform.position = spawnPoint.Position;
-                    return;
-                }
-            }
+            _playerTeleporter = playerTeleporter;
         }
 
         internal void NetworkSpawnPlayer(PlayerInfo playerInfo, GameTeam team)
@@ -42,24 +28,13 @@ namespace Ballmen.InGame.Server
 
             playerDecorator.BindPlayerInfo(playerInfo);
             playerDecorator.SetTeam(team);
+
+            _playerTeleporter.TeleportToAnySpawnPoint(playerDecorator);
+
             playerDecorator.NetworkObject.SpawnWithOwnership(playerInfo.Id, true);
             playerDecorator.NetworkObject.DontDestroyWithOwner = true;
 
             _decoratorsPull.AddDecorator(playerInfo.GUID.ToString(), playerDecorator);
-        }
-
-        private void InitializeDictionaryByTeams() 
-        {
-            _teamSpawnPoints = new();
-
-            foreach (var spawnPoint in _spawnPoints)
-            {
-                if (_teamSpawnPoints.ContainsKey(spawnPoint.Team))
-                    _teamSpawnPoints[spawnPoint.Team].Add(spawnPoint);
-
-                else
-                    _teamSpawnPoints.Add(spawnPoint.Team, new() { spawnPoint });
-            }
         }
     }
 }
