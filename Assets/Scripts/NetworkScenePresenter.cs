@@ -8,7 +8,7 @@ namespace Ballmen.Scene
     [DisallowMultipleComponent] // Can be used if there's network manager already
     public abstract class NetworkScenePresenter : MonoBehaviour
     {
-        protected abstract void OnEnteringScene();
+        protected abstract void OnSynchronizeWithScene();
         protected virtual void OnLeavingScene() { }
 
         private void Awake()
@@ -26,13 +26,13 @@ namespace Ballmen.Scene
         private void OnSynchronized(ulong clientId)
         {
             if (NetworkManager.Singleton.LocalClientId == clientId)
-                OnEnteringScene();
+                OnSynchronizeWithScene();
         }
 
         private void OnLoaded(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
         {
             if (NetworkManager.Singleton.LocalClientId == clientId)
-                OnEnteringScene();
+                OnSynchronizeWithScene();
         }
 
         private void OnUnloadScene(ulong clientId, string sceneName, AsyncOperation asyncOperation)

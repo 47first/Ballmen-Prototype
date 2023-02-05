@@ -9,7 +9,7 @@ namespace Ballmen.InGame
         [SerializeField] private InGameLocalConfigurator _localClientConfigurator;
         [SerializeField] private InGameServerConfigurator _serverConfigurator;
 
-        protected override void OnEnteringScene()
+        protected override void OnSynchronizeWithScene()
         {
             Debug.Log("On In Game Entering");
 
@@ -19,6 +19,8 @@ namespace Ballmen.InGame
 
         protected override void OnLeavingScene()
         {
+            Debug.Log("On In Game Leaving");
+
             _localClientConfigurator.Dispose();
             _serverConfigurator.Dispose();
         }

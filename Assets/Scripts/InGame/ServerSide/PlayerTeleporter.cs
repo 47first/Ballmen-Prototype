@@ -21,13 +21,13 @@ namespace Ballmen.InGame.Server
             {
                 if (spawnPoint.CanSpawn())
                 {
-                    playerDecorator.transform.position = spawnPoint.Position;
+                    playerDecorator.SetPositionClientRpc(spawnPoint.Position);
                     return;
                 }
             }
 
-            Debug.LogWarning("There are no free spawn points!"); 
-            playerDecorator.transform.position = _teamSpawnPoints[playerDecorator.Team][0].Position;
+            Debug.LogWarning("There are no free spawn points!");
+            playerDecorator.SetPositionClientRpc(_teamSpawnPoints[playerDecorator.Team][0].Position);
         }
 
         internal void Initialize()

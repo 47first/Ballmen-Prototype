@@ -76,7 +76,7 @@ namespace Ballmen.InGame.Server
         {
             var serverGameFlow = Instantiate(_serverGameFlowPrefab);
 
-            serverGameFlow.Initialize();
+            serverGameFlow.Initialize(_playerDecoratorsPull, _teleporter);
 
             return serverGameFlow;
         }

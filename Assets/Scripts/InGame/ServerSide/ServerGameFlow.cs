@@ -7,9 +7,11 @@ namespace Ballmen.InGame.Server
     public class ServerGameFlow : MonoBehaviour
     {
         [SerializeField] private GameFlowInfo _gameFlowInfoPrefab;
+        private IPlayerDecoratorsPull _playerDecoratorsPull;
+        private IPlayerTeleporter _playerTeleporter;
         private IGameFlowInfo _gameFlowInfo;
 
-        internal void Initialize()
+        internal void Initialize(IPlayerDecoratorsPull decoratorsPull, IPlayerTeleporter playerTeleporter)
         {
             var networkManager = NetworkManager.Singleton;
             var gameFlowInstance = Instantiate(_gameFlowInfoPrefab);
@@ -18,9 +20,10 @@ namespace Ballmen.InGame.Server
             GameFlowInfo.SetSingleton(gameFlowInstance);
 
             _gameFlowInfo = GameFlowInfo.Singleton;
+            _playerDecoratorsPull = decoratorsPull;
+            _playerTeleporter = playerTeleporter;
 
-            if(_gameFlowInfo == null)
-                Debug.LogWarning("GameFlowInfo is null");
+            Debug.Assert(_gameFlowInfo != null);
         }
 
         internal void AddScore(GameTeam team, int score) 
@@ -33,6 +36,19 @@ namespace Ballmen.InGame.Server
             };
 
             teamScoreRef.Value += score;
+
+            StartNewRound();
+        }
+
+        private void StartNewRound() 
+        {
+            foreach (var decorator in _playerDecoratorsPull.GetDecoratorsEnumerable())
+            {
+                Debug.Log($"{decorator.name} is{(decorator.IsSpawned ? "" : "n\'t")} spawned");
+
+                if (decorator.IsSpawned)
+                    _playerTeleporter.TeleportToAnySpawnPoint(decorator);
+            }
         }
     }
 }

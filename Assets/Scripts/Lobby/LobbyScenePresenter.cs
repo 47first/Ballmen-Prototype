@@ -8,7 +8,7 @@ namespace Ballmen.Lobby
     {
         
 
-        protected override void OnEnteringScene()
+        protected override void OnSynchronizeWithScene()
         {
             var networkManager = NetworkManager.Singleton;
 
