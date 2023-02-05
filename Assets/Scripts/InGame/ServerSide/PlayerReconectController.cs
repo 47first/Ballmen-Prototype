@@ -1,28 +1,33 @@
 using Ballmen.Session;
-using Unity.Netcode;
+using System;
 using UnityEngine;
 
 namespace Ballmen.InGame.Server
 {
-    internal interface IPlayerConnectionController
+    internal sealed class PlayerConnectionController : IDisposable
     {
-        internal void OnPlayerReconnected(PlayerInfo reconnectedPlayer);
-        internal void OnPlayerDisconnected(PlayerInfo disconnectedPlayer);
-    }
-
-    internal sealed class PlayerConnectionController : IPlayerConnectionController
-    {
-        private IPlayerDecoratorsPull _playerDecoratorsPull;
-        internal PlayerConnectionController(IPlayerDecoratorsPull playerDecoratorsPull) 
+        private ISessionInfo _sessionInfo;
+        private IPlayerDecoratorsPull _decoratorsPull;
+        internal PlayerConnectionController(ISessionInfo sessionInfo, IPlayerDecoratorsPull decoratorsPull) 
         {
-            _playerDecoratorsPull = playerDecoratorsPull;
+            _sessionInfo = sessionInfo;
+            _decoratorsPull = decoratorsPull;
+
+            _sessionInfo.OnPlayerApproved.AddListener(OnPlayerReconnected);
+            _sessionInfo.OnPlayerDisconnected.AddListener(OnPlayerDisconnected);
         }
 
-        void IPlayerConnectionController.OnPlayerReconnected(PlayerInfo reconnectedPlayerInfo)
+        public void Dispose()
+        {
+            _sessionInfo?.OnPlayerApproved.RemoveListener(OnPlayerReconnected);
+            _sessionInfo?.OnPlayerDisconnected.RemoveListener(OnPlayerDisconnected);
+        }
+
+        private void OnPlayerReconnected(PlayerInfo reconnectedPlayerInfo)
         {
             Debug.Log($"Player approved!");
 
-            var connectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(reconnectedPlayerInfo);
+            var connectedPlayerDecorator = _decoratorsPull.GetDecorator(reconnectedPlayerInfo);
 
             connectedPlayerDecorator.gameObject.SetActive(true);
             connectedPlayerDecorator.BindPlayerInfo(reconnectedPlayerInfo);
@@ -31,9 +36,9 @@ namespace Ballmen.InGame.Server
             Debug.Log($"{connectedPlayerDecorator.name} were appear");
         }
 
-        void IPlayerConnectionController.OnPlayerDisconnected(PlayerInfo disconnectedPlayer)
+        private void OnPlayerDisconnected(PlayerInfo disconnectedPlayer)
         {
-            var disconnectedPlayerDecorator = _playerDecoratorsPull.GetDecorator(disconnectedPlayer);
+            var disconnectedPlayerDecorator = _decoratorsPull.GetDecorator(disconnectedPlayer);
 
             disconnectedPlayerDecorator.NetworkObject.Despawn(false);
             disconnectedPlayerDecorator.gameObject.SetActive(false);

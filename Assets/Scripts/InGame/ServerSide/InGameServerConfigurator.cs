@@ -1,4 +1,3 @@
-using Ballmen.InGame.Player;
 using Ballmen.Session;
 using System;
 using System.Collections.Generic;
@@ -9,23 +8,20 @@ namespace Ballmen.InGame.Server
 {
     public class InGameServerConfigurator : MonoBehaviour, IDisposable
     {
-        [SerializeField] private PlayerDecorator _playerDecoratorPrefab;
         [SerializeField] private ServerImpulseCreator _impulseCreatorPrefab;
         [SerializeField] private ServerGameFlow _serverGameFlowPrefab;
+        [SerializeField] private PlayerSpawner _playerSpawnerPrefab;
         //In scene
         [SerializeField] private List<Basket> _sceneBaskets;
 
         private ISessionInfo _sessionInfo;
         private IPlayerDecoratorsPull _playerDecoratorsPull;
-        private IPlayerConnectionController _playerConnectionController;
+        private PlayerConnectionController _playerConnectionController;
 
         public void Dispose()
         {
             if (_sessionInfo != null)
-            {
-                _sessionInfo.OnPlayerApproved.RemoveListener(_playerConnectionController.OnPlayerReconnected);
-                _sessionInfo.OnPlayerDisconnected.RemoveListener(_playerConnectionController.OnPlayerDisconnected);
-            }
+                _playerConnectionController?.Dispose();
 
             _playerDecoratorsPull?.Dispose();
         }
@@ -37,18 +33,24 @@ namespace Ballmen.InGame.Server
 
             _sessionInfo = SessionInfo.Singleton;
             _playerDecoratorsPull = new PlayerDecoratorsPull();
-            _playerConnectionController = new PlayerConnectionController(_playerDecoratorsPull);
-            var serverGameFlow = GetAndSpawnServerGameFlow();
+            _playerConnectionController = new PlayerConnectionController(_sessionInfo, _playerDecoratorsPull);
+            var serverGameFlow = SpawnServerGameFlow();
+            var playerSpawner = InitializePlayerSpawner();
 
             SpawnImpulseCreator(_playerDecoratorsPull);
             InitializeBaskets(_playerDecoratorsPull, serverGameFlow);
+            InitialPlayersSpawn(playerSpawner);
+        }
+
+        private void InitialPlayersSpawn(PlayerSpawner playerSpawner) 
+        {
             TeamDistributor.DistributePlayersTeams(_sessionInfo.PlayersStates);
 
             foreach (var playerInfo in _sessionInfo.ConnectedPlayers)
-                SpawnPlayerDecorator(playerInfo);
-
-            _sessionInfo.OnPlayerApproved.AddListener(_playerConnectionController.OnPlayerReconnected);
-            _sessionInfo.OnPlayerDisconnected.AddListener(_playerConnectionController.OnPlayerDisconnected);
+            {
+                var playerTeam = _sessionInfo.PlayersStates.GetStateByGuid(playerInfo.GUID.ToString()).Team;
+                playerSpawner.NetworkSpawnPlayer(playerInfo, playerTeam);
+            }
         }
 
         private void InitializeBaskets(IPlayerDecoratorsPull decoratorsPull, ServerGameFlow serverGameFlow)
@@ -57,26 +59,22 @@ namespace Ballmen.InGame.Server
                 basket.Initialize(decoratorsPull, serverGameFlow);
         }
 
-        private ServerGameFlow GetAndSpawnServerGameFlow()
+        private PlayerSpawner InitializePlayerSpawner() 
+        {
+            var playerSpawner = Instantiate(_playerSpawnerPrefab);
+
+            playerSpawner.Initialize(_playerDecoratorsPull);
+
+            return playerSpawner;
+        }
+
+        private ServerGameFlow SpawnServerGameFlow()
         {
             var serverGameFlow = Instantiate(_serverGameFlowPrefab);
 
             serverGameFlow.Initialize();
 
             return serverGameFlow;
-        }
-
-        private void SpawnPlayerDecorator(PlayerInfo playerInfo)
-        {
-            var playerDecorator = Instantiate(_playerDecoratorPrefab);
-            var playerTeam = _sessionInfo.PlayersStates.GetStateByGuid(playerInfo.GUID.ToString()).Team;
-
-            playerDecorator.BindPlayerInfo(playerInfo);
-            playerDecorator.SetTeam(playerTeam);
-            playerDecorator.NetworkObject.SpawnWithOwnership(playerInfo.Id, true);
-            playerDecorator.NetworkObject.DontDestroyWithOwner = true;
-
-            _playerDecoratorsPull.AddDecorator(playerInfo.GUID.ToString(), playerDecorator);
         }
 
         private void SpawnImpulseCreator(IPlayerDecoratorsPull playerDecoratorPull)
