@@ -30,7 +30,15 @@ namespace Ballmen.InGame.Server
         void IDisposable.Dispose()
         {
             foreach (var guidDecorator in _pull)
-                GameObject.Destroy(guidDecorator.Value.gameObject);
+            {
+                var decorator = guidDecorator.Value;
+
+                if (decorator.IsSpawned)
+                    decorator.NetworkObject.Despawn(true);
+
+                else
+                    GameObject.Destroy(decorator.gameObject);
+            }
 
             _pull.Clear();
         }

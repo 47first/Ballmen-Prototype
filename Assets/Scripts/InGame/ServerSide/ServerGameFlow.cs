@@ -10,6 +10,7 @@ namespace Ballmen.InGame.Server
         private IPlayerDecoratorsPull _playerDecoratorsPull;
         private IPlayerTeleporter _playerTeleporter;
         private IGameFlowInfo _gameFlowInfo;
+        private ISessionInfo _sessionInfo;
 
         internal void Initialize(IPlayerDecoratorsPull decoratorsPull, IPlayerTeleporter playerTeleporter)
         {
@@ -20,6 +21,7 @@ namespace Ballmen.InGame.Server
             GameFlowInfo.SetSingleton(gameFlowInstance);
 
             _gameFlowInfo = GameFlowInfo.Singleton;
+            _sessionInfo = SessionInfo.Singleton;
             _playerDecoratorsPull = decoratorsPull;
             _playerTeleporter = playerTeleporter;
 
@@ -42,13 +44,40 @@ namespace Ballmen.InGame.Server
 
         private void StartNewRound() 
         {
-            foreach (var decorator in _playerDecoratorsPull.GetDecoratorsEnumerable())
-            {
-                Debug.Log($"{decorator.name} is{(decorator.IsSpawned ? "" : "n\'t")} spawned");
 
-                if (decorator.IsSpawned)
-                    _playerTeleporter.TeleportToAnySpawnPoint(decorator);
+            if (IsThereAnyWinners(out GameTeam winnerTeam))
+                AnnounceWinners(winnerTeam);
+
+            else
+            {
+                foreach (var decorator in _playerDecoratorsPull.GetDecoratorsEnumerable())
+                {
+                    Debug.Log($"{decorator.name} is{(decorator.IsSpawned ? "" : "n\'t")} spawned");
+
+                    if (decorator.IsSpawned)
+                        _playerTeleporter.TeleportToAnySpawnPoint(decorator);
+                }
             }
+        }
+
+        private void AnnounceWinners(GameTeam winnerTeam) 
+        {
+            
+        }
+
+        private bool IsThereAnyWinners(out GameTeam winnerTeam)
+        {
+            var gameSettings = _sessionInfo.GameSettings;
+
+            winnerTeam = GameTeam.None;
+
+            if (_gameFlowInfo.RedTeamScore.Value >= gameSettings.ScoreLimit)
+                winnerTeam = GameTeam.Red;
+
+            else if (_gameFlowInfo.BlueTeamScore.Value >= gameSettings.ScoreLimit)
+                winnerTeam = GameTeam.Blue;
+
+            return winnerTeam != GameTeam.None;
         }
     }
 }
