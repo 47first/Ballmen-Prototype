@@ -37,7 +37,14 @@ namespace Ballmen.InGame.Player
             Initialize();
         }
 
-        internal void Initialize()
+        public override void OnNetworkDespawn()
+        {
+            Deconstruct();
+
+            base.OnNetworkDespawn();
+        }
+
+        private void Initialize()
         {
             Debug.Log("Initialize Player Decorator");
 
@@ -51,6 +58,19 @@ namespace Ballmen.InGame.Player
 
                 _local = this;
                 Debug.Assert(_local != null);
+            }
+        }
+
+        private void Deconstruct() 
+        {
+            Debug.Log("Deconstructing Player Decorator");
+
+            if (IsOwner)
+            {
+                Debug.Log("Remove singleton instance");
+
+                _local = null;
+                Debug.Assert(_local == null);
             }
         }
 
