@@ -4,23 +4,27 @@ using UnityEngine;
 
 namespace Ballmen.InGame
 {
-    internal sealed class ScoreView : MonoBehaviour, IDisposable
+    internal sealed class ScoreView : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _redTeamScoreTMP;
         [SerializeField] private TextMeshProUGUI _blueTeamScoreTMP;
         private IGameFlowInfo _gameFlowInfo;
 
-        public void Dispose()
+        private void OnDestroy()
         {
-            _gameFlowInfo.RedTeamScore.OnValueChanged -= ChangeRedTeamValue;
-            _gameFlowInfo.BlueTeamScore.OnValueChanged -= ChangeBlueTeamValue;
-
-            _gameFlowInfo = null;
+            if (_gameFlowInfo != null)
+            {
+                _gameFlowInfo.RedTeamScore.OnValueChanged -= ChangeRedTeamValue;
+                _gameFlowInfo.BlueTeamScore.OnValueChanged -= ChangeBlueTeamValue;
+            }
         }
 
         internal void Bind(IGameFlowInfo gameFlowInfo)
         {
             _gameFlowInfo = gameFlowInfo;
+
+            ChangeRedTeamValue(0, _gameFlowInfo.RedTeamScore.Value);
+            ChangeBlueTeamValue(0, _gameFlowInfo.BlueTeamScore.Value);
 
             _gameFlowInfo.RedTeamScore.OnValueChanged += ChangeRedTeamValue;
             _gameFlowInfo.BlueTeamScore.OnValueChanged += ChangeBlueTeamValue;

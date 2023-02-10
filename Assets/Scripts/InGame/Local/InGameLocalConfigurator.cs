@@ -4,15 +4,10 @@ using UnityEngine;
 
 namespace Ballmen.InGame
 {
-    public class InGameLocalConfigurator : MonoBehaviour, IDisposable
+    public class InGameLocalConfigurator : MonoBehaviour
     {
         [SerializeField] private CameraController _cameraController;
         [SerializeField] private ScoreView _scoreView;
-
-        public void Dispose()
-        {
-            _scoreView.Dispose();
-        }
 
         internal void Configure() 
         {

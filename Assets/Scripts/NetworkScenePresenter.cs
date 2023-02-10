@@ -8,8 +8,8 @@ namespace Ballmen.Scene
     [DisallowMultipleComponent] // Can be used if there's network manager already
     public abstract class NetworkScenePresenter : MonoBehaviour
     {
-        protected abstract void OnSynchronizeWithScene();
-        protected virtual void OnLeavingScene() { }
+        protected abstract void OnEnteringScene();
+        protected virtual void OnNetworkLoadedScene() { }
 
         private void Awake()
         {
@@ -20,39 +20,25 @@ namespace Ballmen.Scene
                     "you must make sure that Network Manager already in scene");
 
             networkManager.SceneManager.OnLoadComplete += OnLoaded;
-            networkManager.SceneManager.OnUnload += OnUnloadScene;
         }
 
-        private void OnSynchronized(ulong clientId)
+        private void Start()
         {
-            if (NetworkManager.Singleton.LocalClientId == clientId)
-                OnSynchronizeWithScene();
+            OnEnteringScene();
+        }
+
+        private void OnDestroy()
+        {
+            var networkManager = NetworkManager.Singleton;
+
+            if(networkManager != null)
+                networkManager.SceneManager.OnLoadComplete -= OnLoaded;
         }
 
         private void OnLoaded(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
         {
             if (NetworkManager.Singleton.LocalClientId == clientId)
-                OnSynchronizeWithScene();
-        }
-
-        private void OnUnloadScene(ulong clientId, string sceneName, AsyncOperation asyncOperation)
-        {
-            Debug.Log($"On {clientId} unload");
-
-            if (NetworkManager.Singleton.LocalClientId == clientId)
-            {
-                UnbindAllEvents();
-
-                OnLeavingScene();
-            }
-        }
-
-        private void UnbindAllEvents() 
-        {
-            var networkManager = NetworkManager.Singleton;
-
-            networkManager.SceneManager.OnLoadComplete -= OnLoaded;
-            networkManager.SceneManager.OnUnload -= OnUnloadScene;
+                OnNetworkLoadedScene();
         }
     }
 }
