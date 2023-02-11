@@ -7,7 +7,7 @@ namespace Ballmen.Session
         Blue
     }
 
-    internal sealed class TeamDistributor
+    internal static class TeamDistributor
     {
         internal static void DistributePlayersTeams(IPlayerStateContainer states) 
         {

@@ -1,14 +1,12 @@
-using Ballmen.GameResults;
-using Unity.Netcode;
-using UnityEngine;
+using Ballmen.Scene;
 
 namespace Ballmen.InGame 
 {
     internal sealed class WinnerAnnouncer
     {
-        internal void AnnounceWinner() 
+        internal void AnnounceWinner()
         {
-            
+            var lobbySceneName = SceneNames.GetByEnum(SceneEnum.Lobby);
         }
     }
 }

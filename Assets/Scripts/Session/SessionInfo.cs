@@ -1,6 +1,4 @@
 ﻿using Unity.Netcode;
-using UnityEngine.SceneManagement;
-using Ballmen.Scene;
 using Ballmen.Client;
 using UnityEngine.Events;
 
@@ -29,15 +27,14 @@ namespace Ballmen.Session
     {
         private static SessionInfo _instance;
         private NetworkList<PlayerInfo> _connectedPlayers;
-        private TeamDistributor _teamDistributor;
         private IGameSettings _gameSettings;
         private ISessionPresenter _presenter;
         private IPlayerStateContainer _playerStateContainer;
         private SessionState _state;
         //Events
-        private UnityEvent<PlayerInfo> _onPlayerDisconnected = new();
-        private UnityEvent<PlayerInfo> _onPlayerApproved = new();
-        private UnityEvent<PlayerInfo> _onPlayerConnected = new();
+        private readonly UnityEvent<PlayerInfo> _onPlayerDisconnected = new();
+        private readonly UnityEvent<PlayerInfo> _onPlayerApproved = new();
+        private readonly UnityEvent<PlayerInfo> _onPlayerConnected = new();
 
         public static SessionInfo Singleton => _instance;
 
@@ -79,8 +76,6 @@ namespace Ballmen.Session
                 _presenter.Dispose();
 
             base.OnNetworkDespawn();
-
-            SceneManager.LoadScene(SceneNames.GetByEnum(SceneEnum.MainMenu), LoadSceneMode.Single);
         }
 
         void ISessionInfo.ChangeState(SessionState state)
@@ -93,9 +88,11 @@ namespace Ballmen.Session
             _connectedPlayers = new(readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
         }
 
-        private void OnDestroy() 
+        public override void OnDestroy() 
         {
             _connectedPlayers?.Dispose();
+
+            base.OnDestroy();
         }
 
         private PlayerInfo GetHostPlayerInfo() => new(NetworkManager.LocalClientId, LocalClientInfo.GetLocal());
