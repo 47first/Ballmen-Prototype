@@ -25,7 +25,7 @@ namespace Ballmen.Services
             }
         }
 
-        public void Register<T, K>(K instance, bool overrideDependency) where T : K
+        public void Register<T>(T instance, bool overrideDependency)
         {
             var type = typeof(T);
 

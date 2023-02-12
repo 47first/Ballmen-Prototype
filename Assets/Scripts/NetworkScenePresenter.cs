@@ -27,14 +27,6 @@ namespace Ballmen.Scene
             OnEnteringScene();
         }
 
-        private void OnDestroy()
-        {
-            var networkManager = NetworkManager.Singleton;
-
-            if(networkManager != null)
-                networkManager.SceneManager.OnLoadComplete -= OnLoaded;
-        }
-
         private void OnLoaded(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
         {
             if (NetworkManager.Singleton.LocalClientId == clientId)

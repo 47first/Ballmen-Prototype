@@ -1,4 +1,4 @@
-using Ballmen.GameResults;
+using Ballmen.WinnerAnnouncer;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 
@@ -17,7 +17,7 @@ namespace Ballmen.Scene
             var winnerAnnounceSceneName = SceneNames.GetByEnum(SceneEnum.WinnerAnnounce);
             NetworkManager.Singleton.Shutdown();
 
-            //Bind data to singleton here...
+            WinnerAnnounceSceneEntryInfo.SetData(gameResult);
 
             SceneManager.LoadScene(winnerAnnounceSceneName);
         }

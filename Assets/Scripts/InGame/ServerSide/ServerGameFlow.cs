@@ -1,6 +1,8 @@
 using Unity.Netcode;
 using UnityEngine;
 using Ballmen.Session;
+using Ballmen.WinnerAnnouncer;
+using Ballmen.InGame.Player;
 
 namespace Ballmen.InGame.Server
 {
@@ -62,7 +64,17 @@ namespace Ballmen.InGame.Server
 
         private void AnnounceWinners(GameTeam winnerTeam) 
         {
-            
+            var gameResult = new GameResult(winnerTeam);
+
+            foreach (var decorator in _playerDecoratorsPull.GetDecoratorsEnumerable()) 
+            {
+                // Reconect remote players first
+                if (decorator.IsSpawned && decorator.IsOwnedByServer == false)
+                    decorator.LoadWinnerAnnounceSceneClientRpc(gameResult);
+            }
+
+            // Reconect host
+            PlayerDecorator.Local.LoadWinnerAnnounceSceneClientRpc(gameResult);
         }
 
         private bool IsThereAnyWinners(out GameTeam winnerTeam)

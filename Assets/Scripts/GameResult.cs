@@ -1,10 +1,9 @@
 using Ballmen.Session;
-using System.Text;
-using UnityEngine;
+using Unity.Netcode;
 
-namespace Ballmen.GameResults
+namespace Ballmen.WinnerAnnouncer
 {
-    internal struct GameResult
+    internal struct GameResult : INetworkSerializable
     {
         internal GameTeam _winnerTeam;
 
@@ -13,17 +12,19 @@ namespace Ballmen.GameResults
             _winnerTeam = winnerTeam;
         }
 
-        public byte[] GetBytes()
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
-            var data = JsonUtility.ToJson(this);
-            return Encoding.UTF8.GetBytes(data);
-        }
+            if (serializer.IsReader)
+            {
+                var reader = serializer.GetFastBufferReader();
+                reader.ReadValueSafe(out _winnerTeam);
+            }
 
-        public static GameResult GetFromBytes(byte[] data)
-        {
-            Debug.Log($"There are {data.Length} bytes in game result");
-            string convertedData = Encoding.UTF8.GetString(data);
-            return JsonUtility.FromJson<GameResult>(convertedData);
+            else
+            {
+                var writer = serializer.GetFastBufferWriter();
+                writer.WriteValueSafe(_winnerTeam);
+            }
         }
     }
 }

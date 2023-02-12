@@ -1,4 +1,7 @@
+using Ballmen.Scene;
+using Ballmen.Services;
 using Ballmen.Session;
+using Ballmen.WinnerAnnouncer;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -99,6 +102,18 @@ namespace Ballmen.InGame.Player
         {
             if(IsOwner)
                 transform.position = position;
+        }
+
+        [ClientRpc]
+        internal void LoadWinnerAnnounceSceneClientRpc(GameResult gameResult)
+        {
+            Debug.Log("Calling client rpc method");
+
+            if (IsOwner)
+            {
+                var sceneChanger = DependencyInjectionService.Singleton.GetDependency<ISceneChanger>();
+                sceneChanger.ChangeToAnnounceWinnerScene(gameResult);
+            }
         }
 
         internal void BindPlayerInfo(PlayerInfo playerInfo) => _playerInfo = playerInfo;
