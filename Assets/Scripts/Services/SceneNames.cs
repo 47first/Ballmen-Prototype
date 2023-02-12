@@ -6,7 +6,8 @@ namespace Ballmen.Scene
     {
         MainMenu, 
         Lobby,
-        InGame
+        InGame,
+        WinnerAnnounce
     }
 
     internal class SceneNames
@@ -18,7 +19,8 @@ namespace Ballmen.Scene
             {
                 { SceneEnum.MainMenu, "MainMenu" },
                 { SceneEnum.InGame, "InGame" },
-                { SceneEnum.Lobby, "Lobby" }
+                { SceneEnum.Lobby, "Lobby" },
+                { SceneEnum.WinnerAnnounce, "WinnerAnnounce" }
             };
         }
 

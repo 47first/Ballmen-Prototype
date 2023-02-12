@@ -88,13 +88,6 @@ namespace Ballmen.Session
             _connectedPlayers = new(readPerm: NetworkVariableReadPermission.Everyone, writePerm: NetworkVariableWritePermission.Server);
         }
 
-        public override void OnDestroy() 
-        {
-            _connectedPlayers?.Dispose();
-
-            base.OnDestroy();
-        }
-
         private PlayerInfo GetHostPlayerInfo() => new(NetworkManager.LocalClientId, LocalClientInfo.GetLocal());
 
         private void InitializeGameSettings() => _gameSettings = GameSettings.Default;

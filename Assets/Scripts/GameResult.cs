@@ -1,19 +1,17 @@
-using Ballmen.Client;
 using Ballmen.Session;
 using System.Text;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Ballmen.GameResults
 {
-    internal interface IGameResult 
+    internal struct GameResult
     {
-        
-    }
+        internal GameTeam _winnerTeam;
 
-    internal struct GameResult : IGameResult
-    {
-
+        internal GameResult(GameTeam winnerTeam) 
+        {
+            _winnerTeam = winnerTeam;
+        }
 
         public byte[] GetBytes()
         {
@@ -21,7 +19,7 @@ namespace Ballmen.GameResults
             return Encoding.UTF8.GetBytes(data);
         }
 
-        public static IGameResult GetFromBytes(byte[] data)
+        public static GameResult GetFromBytes(byte[] data)
         {
             Debug.Log($"There are {data.Length} bytes in game result");
             string convertedData = Encoding.UTF8.GetString(data);
