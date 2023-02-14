@@ -7,7 +7,7 @@ namespace Ballmen.Scene
     internal interface ISceneChanger 
     {
         internal void ChangeToAnnounceWinnerScene(GameResult gameResult);
-        internal void ChangeToMainMenu(string message = "");
+        internal void ChangeToMainMenu(string message = "", string title = "");
     }
 
     internal sealed class SceneChanger : ISceneChanger
@@ -22,7 +22,7 @@ namespace Ballmen.Scene
             SceneManager.LoadScene(winnerAnnounceSceneName);
         }
 
-        void ISceneChanger.ChangeToMainMenu(string message)
+        void ISceneChanger.ChangeToMainMenu(string message, string title)
         {
             var mainMenuSceneName = SceneNames.GetByEnum(SceneEnum.MainMenu);
             NetworkManager.Singleton.Shutdown();

@@ -153,6 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _winnerTmp: {fileID: 226992172}
+  _tryReconnectButton: {fileID: 66322132}
+  _backToMenuButton: {fileID: 206505930}
 --- !u!4 &31962426
 Transform:
   m_ObjectHideFlags: 0
@@ -265,7 +267,7 @@ GameObject:
   - component: {fileID: 66322133}
   - component: {fileID: 66322132}
   m_Layer: 5
-  m_Name: Reconect (TMP)
+  m_Name: Reconect (Button)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -762,7 +764,7 @@ GameObject:
   - component: {fileID: 206505931}
   - component: {fileID: 206505930}
   m_Layer: 5
-  m_Name: BackToMenu (TMP)
+  m_Name: BackToMenu (Button)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

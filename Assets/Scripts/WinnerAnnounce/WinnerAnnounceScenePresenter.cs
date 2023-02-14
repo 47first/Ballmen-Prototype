@@ -10,7 +10,8 @@ namespace Ballmen.WinnerAnnouncer
         protected override void OnEnteringScene()
         {
             var resultsData = WinnerAnnounceSceneEntryInfo.Singleton.Results;
-            _view.UpdateView(resultsData);
+
+            _view.Initialize(resultsData);
         }
     }
 }
